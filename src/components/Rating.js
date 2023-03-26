@@ -6,10 +6,10 @@ import Colors from '../constants/Colors'
 
 const Rating = ({ value, text }) => {
     const color = Colors.orange
-    const size = 8
+    const size = 14
 
     return (
-        <HStack space={0.4} mt={1} alignItems="center">
+        <HStack space={2.3} mt={1} alignItems="center">
             <FontAwesome
                 name={value >= 1 ? "star" : value >= 0.5 ? "star-half-o" : "star-o"} color={color} size={size}
             />
