@@ -1,10 +1,11 @@
 import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import WelcomeScreen from '../screens/WelcomeScreen';
+
 import TabNavigator from './TabNavigator';
 import ProductDetailsScreen from '../screens/ProductDetailsScreen';
 import CardScreen from '../screens/CardScreen';
+import WelcomeScreen from '../screens/onboard/WelcomeScreen';
 
 const Stack = createNativeStackNavigator();
 
