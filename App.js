@@ -1,21 +1,19 @@
-import { StatusBar } from 'expo-status-bar';
 import { NativeBaseProvider } from 'native-base';
-import { StyleSheet, Text, View } from 'react-native';
+import { Provider } from 'react-redux';
 import StackNavigator from './src/navigator/StackNavigator';
+import store from './src/redux/store';
 
 export default function App() {
+
+
   return (
-    <NativeBaseProvider>
-      <StackNavigator></StackNavigator>
-    </NativeBaseProvider>
+    <Provider store={store}>
+
+      <NativeBaseProvider>
+        <StackNavigator></StackNavigator>
+      </NativeBaseProvider>
+    </Provider>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+
