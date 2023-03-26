@@ -1,13 +1,16 @@
 import React, { useState } from 'react'
-import { Box, Heading, HStack, Image, ScrollView, Spacer, Text, VStack } from 'native-base'
+import { Box, Heading, HStack, Image, Pressable, ScrollView, Spacer, Text, VStack } from 'native-base'
 import Colors from '../constants/Colors'
 import Rating from '../components/Rating'
 import NumericInput from 'react-native-numeric-input'
 import CustomButton from '../components/CustomButton'
 import { useDispatch } from 'react-redux'
 import { AddToCard } from '../redux/actions/cardActions'
+import { FontAwesome } from '@expo/vector-icons'
+import { useNavigation } from '@react-navigation/native'
 
 const ProductDetailsScreen = ({ route }) => {
+    const navigation = useNavigation()
     const dispatch = useDispatch()
     const [amount, setAmount] = useState(0)
     const product = route.params;
@@ -16,6 +19,19 @@ const ProductDetailsScreen = ({ route }) => {
     }
     return (
         <Box safeArea flex={1} bg={Colors.white}>
+            <HStack alignItems='center' space={3}
+                w='full'
+                px={6}>
+
+                <Pressable onPress={() => navigation.goBack()}>
+                    <FontAwesome name='arrow-left' size={22} color={Colors.black} />
+
+                </Pressable>
+                <Text color={Colors.black} fontSize={24} bold>
+                    Card
+                </Text>
+
+            </HStack>
             <ScrollView>
                 <Image src={product["thumbnail"]}
                     alt="Image" w="full" h={300} resizeMode="contain" />
@@ -25,7 +41,10 @@ const ProductDetailsScreen = ({ route }) => {
                     </Heading>
                     <Rating value={product['rating']} />
                     <HStack space={2} alignItems='center' my={5}>
-                        <NumericInput value={amount} totalWidth={140} totalHeight={40} iconSize={25}
+                        <Heading bold color={Colors.black} fontSize={22}>
+                            Stock: {product['stock']}
+                        </Heading>
+                        {/* <NumericInput value={amount} totalWidth={140} totalHeight={40} iconSize={25}
                             step={1}
                             minValue={0}
                             borderColor={Colors.lightBlack}
@@ -35,7 +54,7 @@ const ProductDetailsScreen = ({ route }) => {
                             rightButtonBackgroundColor={Colors.orange}
                             leftButtonBackgroundColor={Colors.orange}
                             onChange={(value) => setAmount(value)}
-                        />
+                        /> */}
                         <Spacer />
                         <Heading bold color={Colors.black} fontSize={24}>
                             ${product['price']}
@@ -45,10 +64,8 @@ const ProductDetailsScreen = ({ route }) => {
                         {product['description']}
                     </Text>
                     <CustomButton onPress={() => {
-                        //console.log(`first: ${latestItem['title']}}`)
                         addItem(product);
-                        console.log(`pressed`)
-                        // console.log(`second: ${cards['title']}`)
+                        navigation.goBack();
                     }} bg={Colors.orange} color={Colors.white} mt={10}>ADD TO CARD</CustomButton>
                 </VStack>
             </ScrollView>
