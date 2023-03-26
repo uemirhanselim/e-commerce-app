@@ -1,11 +1,11 @@
 import * as actionTypes from "./actionTypes";
 
-export const AddToCard = (index) => ({
+export const AddToCard = (item) => ({
     type: actionTypes.ADD_TO_CARD,
-    payload: index
+    payload: item
 })
 
-export const DeleteFromCard = (index) => ({
+export const DeleteFromCard = (id) => ({
     type: actionTypes.ADD_TO_CARD,
-    payload: index
+    payload: id
 })
