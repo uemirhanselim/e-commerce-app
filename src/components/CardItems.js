@@ -1,33 +1,35 @@
 
-import { Box, Button, Center, HStack, Image, Pressable, Text, View, VStack } from 'native-base'
+import { Box, Button, Center, FlatList, HStack, Image, Pressable, Text, View, VStack } from 'native-base'
 import React from 'react'
 import Colors from '../constants/Colors'
 import { FontAwesome } from '@expo/vector-icons'
-import { SwipeListView } from 'react-native-swipe-list-view'
 import { useDispatch } from 'react-redux'
 import { DeleteFromCard } from '../redux/actions/cardActions'
+import { Swipeable, TouchableOpacity } from 'react-native-gesture-handler'
 
-const Swiper = ({ card }) => {
+
+
+
+
+const Item = ({ item }) => {
+
+    const rightSwipe = () => {
+        return (
+            <View style={{ backgroundColor: '#fff', height: 100 }}>
+                <TouchableOpacity
+                    style={{
+                        width: 100, height: 100, backgroundColor: 'red'
+                        , justifyContent: 'center', alignItems: 'center',
+                    }}>
+                    <FontAwesome name='trash' size={24} color={Colors.white} />
+                </TouchableOpacity>
+            </View>
+        )
+    }
+
     return (
-        <View>
-            <SwipeListView
-                rightOpenValue={-50}
-                previewRowKey="0"
-                previewOpenValue={-40}
-                previewOpenDelay={3000}
-                data={card}
-                renderItem={renderItems}
-                renderHiddenItem={renderHiddenItems}
-            />
-        </View>
-    );
-}
 
-
-const renderItems = ({ item }) => {
-
-    return (
-        <Pressable>
+        <Swipeable renderRightActions={rightSwipe}>
             <Box ml={6} mb={3} s>
                 <HStack alignItems="center" bg={Colors.white} shadow={1} rounded={10} h={20} overflow='hidden'>
                     <Center w='25%' h={10} bg={Colors.lightBlack}>
@@ -49,21 +51,10 @@ const renderItems = ({ item }) => {
                     </Center> */}
                 </HStack>
             </Box>
-        </Pressable >
-    );
-};
+        </Swipeable>
 
-
-const renderHiddenItems = ({ item }) => {
-    return (
-        <Pressable w={60} roundedTopRight={10} roundedBottomRight={10} h={20} ml='auto' justifyContent="center" bg={Colors.red}>
-            <Center alignItems="center" >
-                <FontAwesome name='trash' size={24} color={Colors.white} />
-            </Center>
-        </Pressable>
-    );
+    )
 }
-
 
 const CardItems = ({ card }) => {
     const dispatch = useDispatch()
@@ -72,7 +63,8 @@ const CardItems = ({ card }) => {
     }
     return (
         <Box mr={6}>
-            <Swiper card={card} />
+            {card.map((item) => <Item item={item} />)}
+
         </Box>
 
     )

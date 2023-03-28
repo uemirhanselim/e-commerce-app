@@ -4,7 +4,7 @@ import Colors from '../constants/Colors'
 import Rating from '../components/Rating'
 import NumericInput from 'react-native-numeric-input'
 import CustomButton from '../components/CustomButton'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { AddToCard } from '../redux/actions/cardActions'
 import { FontAwesome } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
@@ -13,9 +13,30 @@ const ProductDetailsScreen = ({ route }) => {
     const navigation = useNavigation()
     const dispatch = useDispatch()
     const [amount, setAmount] = useState(0)
+    const state = useSelector((state) => state)
+    let addedItems = []
+    addedItems = state.result
     const product = route.params;
     const addItem = (item) => {
-        dispatch(AddToCard(item))
+        console.log(`item ${item['id']}`)
+
+        if (addedItems.length === 0) {
+            dispatch(AddToCard(item))
+        } else {
+            for (let index = 0; index < addedItems.length; index++) {
+                const element = addedItems[index];
+                console.log(`element ${element['id']}`)
+                console.log(`element girdi`)
+                if (element['id'] === item['id']) {
+
+                    return
+                }
+                else {
+                    dispatch(AddToCard(item))
+                }
+
+            }
+        }
     }
     return (
         <Box safeArea flex={1} bg={Colors.white}>
