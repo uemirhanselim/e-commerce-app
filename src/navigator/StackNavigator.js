@@ -6,6 +6,8 @@ import TabNavigator from './TabNavigator';
 import ProductDetailsScreen from '../screens/ProductDetailsScreen';
 import CardScreen from '../screens/CardScreen';
 import WelcomeScreen from '../screens/onboard/WelcomeScreen';
+import AddProduct from '../screens/AddProduct';
+import CameraScreen from '../screens/CameraScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -22,6 +24,8 @@ const StackNavigator = () => {
         <Stack.Screen name='TabNavigator' component={TabNavigator} />
         <Stack.Screen name='ProductDetailsScreen' component={ProductDetailsScreen} />
         <Stack.Screen name='CardScreen' component={CardScreen} />
+        <Stack.Screen name='AddProduct' component={AddProduct} />
+        <Stack.Screen name='CameraScreen' component={CameraScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   )
