@@ -78,6 +78,7 @@ const HomeScreen = () => {
                 </Pressable>
 
             </HStack>
+
             {isLoading ? <ActivityIndicator size='large' color={Colors.orange} style={styleSheet.activityIndicator} /> :
                 <ScrollView flex={1}>
                     <Flex
@@ -119,6 +120,14 @@ const HomeScreen = () => {
                         ))}
                     </Flex>
                 </ScrollView>}
+
+            <Box style={styleSheet.fab}>
+                <Pressable onPress={() => navigation.navigate("AddProduct")}>
+
+                    <Icon name='plus' type='entypo' color={Colors.white} />
+                </Pressable>
+            </Box>
+
         </Box>
     )
 }
@@ -136,5 +145,18 @@ const styleSheet = StyleSheet.create({
         top: 0,
         bottom: 0,
 
+    },
+    fab: {
+        borderBottomRightRadius: 30,
+        borderBottomLeftRadius: 30,
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        backgroundColor: Colors.orange,
+        height: 60,
+        width: 60,
+        bottom: 16,
+        right: 15,
+        position: 'absolute',
+        justifyContent: 'center'
     }
 })
