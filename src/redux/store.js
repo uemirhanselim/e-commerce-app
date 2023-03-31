@@ -1,13 +1,15 @@
-import { createStore,combineReducers,applyMiddleware } from "redux";
+import { createStore, combineReducers, applyMiddleware } from "redux";
 import thunk from "redux-thunk";
 import logger from "redux-logger";
-import allReducers from "./reducers/reducer";
+import ProductReducer from "./reducers/reducer";
+import CameraReducer from "./reducers/cameraReducer";
 
 const reducers = combineReducers({
-    result: allReducers,
+    ProductReducer,
+    CameraReducer,
 })
 
-const store = createStore(reducers,applyMiddleware(thunk,logger));
+const store = createStore(reducers, applyMiddleware(thunk, logger));
 
 export default store;
 

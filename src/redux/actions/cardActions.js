@@ -9,3 +9,8 @@ export const DeleteFromCard = (id) => ({
     type: actionTypes.ADD_TO_CARD,
     payload: id
 })
+
+export const UpdateURI = (uri) => ({
+    type: actionTypes.UPDATE_URI,
+    payload: uri
+})
