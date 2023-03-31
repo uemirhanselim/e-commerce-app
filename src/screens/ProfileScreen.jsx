@@ -1,9 +1,11 @@
 
 import { Box, Center, FormControl, Heading, Image, Input, ScrollView, Text, VStack } from 'native-base'
 import React from 'react'
+import { useEffect } from 'react'
 import { useState } from 'react'
 import CustomButton from '../components/CustomButton'
 import Colors from '../constants/Colors'
+import { GetData, StoreData } from '../storage/ProfileStorage'
 
 const Inputs = [
     {
@@ -25,8 +27,21 @@ const Inputs = [
 ]
 
 const ProfileScreen = () => {
-    const [displayedUsername, setDisplayedUsername] = useState("Williams Robin")
+    const [displayedUsername, setDisplayedUsername] = useState("")
     const [usernameController, setUsernameController] = useState("")
+
+    useEffect(() => {
+        getStoredData()
+    }, [])
+
+    const getStoredData = async () => {
+        const name = await GetData("username")
+        console.log(`stored name: ${name}`)
+        if (name !== null || name !== '') {
+            setDisplayedUsername(name)
+        }
+    }
+
     return (
         <>
             <Center bg={Colors.orange} pt={10} pb={6}>
@@ -72,8 +87,9 @@ const ProfileScreen = () => {
                                 </FormControl>
                             ))
                         }
-                        <CustomButton bg={Colors.orange} color={Colors.white} onPress={() => {
+                        <CustomButton bg={Colors.orange} color={Colors.white} onPress={async () => {
                             setDisplayedUsername(usernameController)
+                            await StoreData("username", usernameController)
                             setUsernameController("")
                         }}>
                             UPDATE PROFILE
