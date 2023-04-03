@@ -5,8 +5,6 @@ import { View, Text } from 'native-base'
 import CustomButton from '../../components/CustomButton'
 import Colors from '../../constants/Colors'
 
-
-
 const WelcomeScreen = ({ navigation }) => {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }} px={5}>
