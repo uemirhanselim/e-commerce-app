@@ -11,14 +11,15 @@ import CameraScreen from '../screens/CameraScreen';
 
 const Stack = createNativeStackNavigator();
 
-const StackNavigator = () => {
+const StackNavigator = ({linking}) => {
   return (
-    <NavigationContainer>
+    <NavigationContainer linking={linking}>
       <Stack.Navigator
         initialRouteName='Welcome'
         screenOptions={{
           headerShown: false
         }}
+        
       >
         <Stack.Screen name='Welcome' component={WelcomeScreen} />
         <Stack.Screen name='TabNavigator' component={TabNavigator} />

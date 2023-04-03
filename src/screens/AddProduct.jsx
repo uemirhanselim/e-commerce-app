@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { StyleSheet } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
+import { AppState, StyleSheet } from 'react-native'
 import { Camera } from 'expo-camera';
 import { Box, HStack, Image, Input, Pressable, ScrollView, Text, View, VStack } from 'native-base'
 import Colors from '../constants/Colors'
@@ -10,6 +10,18 @@ import * as MediaLibrary from 'expo-media-library';
 import CustomButton from '../components/CustomButton';
 import { getStoredProduct, storeProduct } from '../storage/AddItemStorage'
 
+import * as Notifications from 'expo-notifications';
+import * as Linking from 'expo-linking';
+import { registerForPushNotificationsAsync } from '../product/PushNotifications';
+
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: false,
+        shouldSetBadge: false,
+    }),
+});
+
 const AddProduct = () => {
     const navigation = useNavigation()
     const [permission, requestPermission] = Camera.useCameraPermissions();
@@ -19,11 +31,61 @@ const AddProduct = () => {
     const [desc, setDesc] = useState("")
     const [price, setPrice] = useState("")
     const [stock, setStock] = useState("")
+    const appState = useRef(AppState.currentState)
+    const [appStateVisible, setAppStateVisible] = useState(appState.current);
+    const [expoPushToken, setExpoPushToken] = useState('');
+    const [notification, setNotification] = useState(false);
+    const notificationListener = useRef();
+    const responseListener = useRef();
+    const [isPublishProductPressed, setPublishProductPressed] = useState(false)
 
-    //? SHOWS THE STORED DATA
-    // useEffect(() => {
-    //     CoData()
-    // }, [])
+
+    useEffect(() => {
+        //? SHOWS THE STORED DATA
+        // CoData()
+        const prefix = Linking.createURL("/")
+        // getDeepLinkUrl()
+
+        //* Checks app state
+        const subscription = AppState.addEventListener('change', nextAppState => {
+            console.log('next app state', nextAppState);
+            if (
+                appState.current.match(/inactive|background/) &&
+                nextAppState === 'active'
+            ) {
+                console.log('App has come to the foreground!');
+            }
+            if (isPublishProductPressed === false && nextAppState === 'background') {
+                pushNt()
+            }
+            appState.current = nextAppState;
+            setAppStateVisible(appState.current);
+            console.log('AppState', appState.current);
+        })
+
+        registerForPushNotificationsAsync().then(token => setExpoPushToken(token));
+
+        notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+            setNotification(notification);
+
+        });
+
+        responseListener.current = Notifications.addNotificationResponseReceivedListener(response => {
+            console.log('response is ', response);
+            console.log("the linking is", response.notification.request.content.data.data)
+            Linking.openURL(prefix + "tabNav/profile")
+        });
+
+
+        return () => {
+            subscription.remove();
+            Notifications.removeNotificationSubscription(notificationListener.current);
+            Notifications.removeNotificationSubscription(responseListener.current);
+        };
+    }, [])
+    const pushNt = async () => {
+        await schedulePushNotification()
+    }
 
     // const CoData = async () => {
     //     const incoming = await getStoredProduct("maymune")
@@ -83,23 +145,25 @@ const AddProduct = () => {
                                 value={stock} onChangeText={text => setStock(text)} />
                         </View>
                     </HStack>
-                    <CustomButton bg={Colors.lightOrange} mt={5} onPress={async () => {
-                        await storeProduct(brand, {
-                            "id": price * 3,
-                            "title": brand,
-                            "description": desc,
-                            "price": price,
-                            "discountPercentage": 12.96,
-                            "rating": 3,
-                            "stock": stock,
-                            "brand": brand,
-                            "category": "smartphones",
-                            "thumbnail": state,
-                            "images": [
-                            ]
-                        })
-                        const incoming = await getStoredProduct("maymune")
-                        console.log(`stored Data => ${incoming['title']}`)
+                    <CustomButton bg={Colors.orange} mt={5} onPress={async () => {
+                        console.log("pressed")
+                        setPublishProductPressed(true)
+                        // await storeProduct(brand, {
+                        //     "id": price * 3,
+                        //     "title": brand,
+                        //     "description": desc,
+                        //     "price": price,
+                        //     "discountPercentage": 12.96,
+                        //     "rating": 3,
+                        //     "stock": stock,
+                        //     "brand": brand,
+                        //     "category": "smartphones",
+                        //     "thumbnail": state,
+                        //     "images": [
+                        //     ]
+                        // })
+                        // const incoming = await getStoredProduct("maymune")
+                        // console.log(`stored Data => ${incoming['title']}`)
                     }}>Publish Product</CustomButton>
                 </VStack>
             </ScrollView>
@@ -107,6 +171,16 @@ const AddProduct = () => {
     )
 }
 
+async function schedulePushNotification() {
+    await Notifications.scheduleNotificationAsync({
+        content: {
+            title: "You haven't published your product",
+            body: 'Go back to app to publish your product',
+            data: { data: "deepLinkUrl" },
+        },
+        trigger: { seconds: 2 },
+    });
+}
 
 
 export default AddProduct
