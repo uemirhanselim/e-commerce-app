@@ -9,9 +9,11 @@ import { FontAwesome } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
 
 const CardScreen = () => {
-    const state = useSelector((state) => state)
+    const state = useSelector(state => state.ProductReducer)
     let addedItems = []
-    addedItems = state.result
+    if (state && state.items) {
+        addedItems = state.items;
+    }
     const [totalPrice, setTotalPrice] = useState(0);
     const navigation = useNavigation()
 

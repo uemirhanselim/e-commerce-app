@@ -13,9 +13,11 @@ const HomeScreen = () => {
     const [productList, setProductList] = useState([])
     const [filteredData, setFilteredData] = useState([])
     const [isLoading, setLoading] = useState(true)
-    const state = useSelector((state) => state)
-    let addedItems = []
-    addedItems = state.result
+    const state = useSelector((state) => state.ProductReducer)
+    let addedItems = [];
+    if (state && state.items) {
+        addedItems = state.items;
+    }
 
 
     const handleSearch = (query) => {
