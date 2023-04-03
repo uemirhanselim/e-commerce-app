@@ -8,36 +8,30 @@ import { useDispatch, useSelector } from 'react-redux'
 import { AddToCard } from '../redux/actions/cardActions'
 import { FontAwesome } from '@expo/vector-icons'
 import { useNavigation } from '@react-navigation/native'
+import { Snackbar } from 'react-native-paper';
 
 const ProductDetailsScreen = ({ route }) => {
     const navigation = useNavigation()
     const dispatch = useDispatch()
-    const [amount, setAmount] = useState(0)
-    const state = useSelector((state) => state)
+    const [snackbarText, setSnackbarText] = useState(" added to your card!")
+    const [visible, setVisible] = useState(false);
+    const state = useSelector(state => state.ProductReducer)
     let addedItems = []
-    addedItems = state.result
+    if (state && state.items) {
+        addedItems = state.items
+    }
     const product = route.params;
+
     const addItem = (item) => {
         console.log(`item ${item['id']}`)
 
-        if (addedItems.length === 0) {
+        if (addedItems.length === 0 || !addedItems.some(element => element['id'] === item['id'])) {
             dispatch(AddToCard(item))
         } else {
-            for (let index = 0; index < addedItems.length; index++) {
-                const element = addedItems[index];
-                console.log(`element ${element['id']}`)
-                console.log(`element girdi`)
-                if (element['id'] === item['id']) {
-
-                    return
-                }
-                else {
-                    dispatch(AddToCard(item))
-                }
-
-            }
+            setSnackbarText(" is already in your card!")
         }
     }
+
     return (
         <Box safeArea flex={1} bg={Colors.white}>
             <HStack alignItems='center' space={3}
@@ -86,10 +80,19 @@ const ProductDetailsScreen = ({ route }) => {
                     </Text>
                     <CustomButton onPress={() => {
                         addItem(product);
-                        navigation.goBack();
+                        // navigation.goBack();
+                        setVisible(!visible)
                     }} bg={Colors.orange} color={Colors.white} mt={10}>ADD TO CARD</CustomButton>
+
                 </VStack>
             </ScrollView>
+            <Snackbar
+                visible={visible}
+                duration={5000}
+                onDismiss={() => setVisible(false)}
+            >
+                {product['title'] + snackbarText}
+            </Snackbar>
         </Box>
     )
 }
