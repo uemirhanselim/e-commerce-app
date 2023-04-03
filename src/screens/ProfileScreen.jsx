@@ -1,8 +1,7 @@
 
 import { Box, Center, FormControl, Heading, Image, Input, ScrollView, Text, VStack } from 'native-base'
-import React from 'react'
-import { useEffect } from 'react'
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import * as Linking from 'expo-linking';
 import CustomButton from '../components/CustomButton'
 import Colors from '../constants/Colors'
 import { GetData, StoreData } from '../storage/ProfileStorage'
@@ -27,7 +26,7 @@ const Inputs = [
 ]
 
 const ProfileScreen = () => {
-    const [displayedUsername, setDisplayedUsername] = useState("")
+    const [displayedUsername, setDisplayedUsername] = useState("Zaniolo")
     const [usernameController, setUsernameController] = useState("")
 
     useEffect(() => {
@@ -37,8 +36,9 @@ const ProfileScreen = () => {
     const getStoredData = async () => {
         const name = await GetData("username")
         console.log(`stored name: ${name}`)
-        if (name !== null || name !== '') {
+        if (name ?? false) {
             setDisplayedUsername(name)
+
         }
     }
 
