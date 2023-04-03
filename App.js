@@ -2,6 +2,7 @@ import { NativeBaseProvider } from 'native-base';
 import { Provider } from 'react-redux';
 import StackNavigator from './src/navigator/StackNavigator';
 import store from './src/redux/store';
+import linking from './src/product/Linking';
 
 export default function App() {
 
@@ -10,7 +11,8 @@ export default function App() {
     <Provider store={store}>
 
       <NativeBaseProvider>
-        <StackNavigator></StackNavigator>
+
+        <StackNavigator linking={linking}></StackNavigator>
       </NativeBaseProvider>
     </Provider>
   );
