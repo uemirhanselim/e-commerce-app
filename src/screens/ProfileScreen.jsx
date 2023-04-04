@@ -1,10 +1,11 @@
 
-import { Box, Center, FormControl, Heading, Image, Input, ScrollView, Text, VStack } from 'native-base'
+import { Box, Center, FormControl, Heading, Image, Input, ScrollView, Text, VStack, View } from 'native-base'
 import React, { useState, useEffect } from 'react'
-import * as Linking from 'expo-linking';
 import CustomButton from '../components/CustomButton'
 import Colors from '../constants/Colors'
-import { GetData, StoreData } from '../storage/ProfileStorage'
+import { GetData } from '../storage/ProfileStorage'
+import MapView, { Marker } from 'react-native-maps'
+import { ActivityIndicator } from 'react-native-paper'
 
 const Inputs = [
     {
@@ -28,10 +29,16 @@ const Inputs = [
 const ProfileScreen = () => {
     const [displayedUsername, setDisplayedUsername] = useState("Zaniolo")
     const [usernameController, setUsernameController] = useState("")
+    const [latitude, setLatitude] = useState();
+    const [longitude, setLongitude] = useState();
+    const [city, setCity] = useState("");
+    const [isLoading, setLoading] = useState(true)
 
     useEffect(() => {
         getStoredData()
+        getLocation()
     }, [])
+
 
     const getStoredData = async () => {
         const name = await GetData("username")
@@ -40,6 +47,22 @@ const ProfileScreen = () => {
             setDisplayedUsername(name)
 
         }
+
+        const lat = await GetData("latitude")
+        const lon = await GetData("longitude")
+        const region = await GetData("region")
+        setCity(region)
+        setLatitude(parseFloat(lat))
+        setLongitude(parseFloat(lon))
+        setLoading(false)
+        console.log("lat", lat)
+        console.log("long", lon)
+        console.log("city", region)
+
+    }
+
+    const getLocation = async () => {
+
     }
 
     return (
@@ -55,8 +78,8 @@ const ProfileScreen = () => {
                 <Heading bold fontSize={15} isTruncated my={2} color={Colors.white}>
                     {displayedUsername}
                 </Heading>
-                <Text italic fontSize={10} color={Colors.white}>
-                    Joined in March 21 2023
+                <Text italic fontSize={13} color={Colors.white}>
+                    {city}
                 </Text>
             </Center>
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -94,7 +117,21 @@ const ProfileScreen = () => {
                         }}>
                             UPDATE PROFILE
                         </CustomButton>
+                        {isLoading ? <ActivityIndicator /> :
+                            <MapView style={{ height: 300 }} initialRegion={{
+                                latitude: latitude,
+                                longitude: longitude,
+                                latitudeDelta: 0.0922,
+                                longitudeDelta: 0.0421,
+                            }}>
+
+                                <Marker
+                                    coordinate={{ latitude: latitude, longitude: longitude }}
+                                    title="Emirhan's Home"
+                                />
+                            </MapView>}
                     </VStack>
+
                 </Box>
             </ScrollView>
         </>
