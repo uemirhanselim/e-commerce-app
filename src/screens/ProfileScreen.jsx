@@ -3,7 +3,7 @@ import { Box, Center, FormControl, Heading, Image, Input, ScrollView, Text, VSta
 import React, { useState, useEffect } from 'react'
 import CustomButton from '../components/CustomButton'
 import Colors from '../constants/Colors'
-import { GetData } from '../storage/ProfileStorage'
+import { GetData, StoreData } from '../storage/ProfileStorage'
 import MapView, { Marker } from 'react-native-maps'
 import { ActivityIndicator } from 'react-native-paper'
 

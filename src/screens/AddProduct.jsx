@@ -44,7 +44,6 @@ const AddProduct = () => {
         //? SHOWS THE STORED DATA
         // CoData()
         const prefix = Linking.createURL("/")
-        // getDeepLinkUrl()
 
         //* Checks app state
         const subscription = AppState.addEventListener('change', nextAppState => {

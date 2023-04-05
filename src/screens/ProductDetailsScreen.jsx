@@ -80,8 +80,9 @@ const ProductDetailsScreen = ({ route }) => {
                     </Text>
                     <CustomButton onPress={() => {
                         addItem(product);
-                        // navigation.goBack();
+
                         setVisible(!visible)
+                        // navigation.goBack();
                     }} bg={Colors.orange} color={Colors.white} mt={10}>ADD TO CARD</CustomButton>
 
                 </VStack>
