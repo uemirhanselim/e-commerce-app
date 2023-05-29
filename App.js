@@ -6,11 +6,12 @@ import linking from './src/product/Linking';
 import { useEffect } from 'react';
 import * as Location from 'expo-location';
 import { StoreData } from './src/storage/ProfileStorage';
+import Timeline from './src/screens/order/Timeline';
 
 export default function App() {
 
   useEffect(() => {
-    locat()
+    // locat()
   }, [])
 
   const locat = async () => {
@@ -41,8 +42,8 @@ export default function App() {
     <Provider store={store}>
 
       <NativeBaseProvider>
-
-        <StackNavigator linking={linking}></StackNavigator>
+        <Timeline />
+        {/* <StackNavigator linking={linking}></StackNavigator> */}
       </NativeBaseProvider>
     </Provider>
   );
