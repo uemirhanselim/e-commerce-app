@@ -1,8 +1,7 @@
-import { Box, HStack, Spacer, VStack } from 'native-base';
+import { Box, HStack, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, FlatList, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
 import axios from 'axios'
-import { format } from 'date-fns';
 
 const TimelineItem = ({ item, index, data }) => {
   const isOddIndex = index % 2 === 1;
