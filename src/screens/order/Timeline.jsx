@@ -2,6 +2,7 @@ import { Box, HStack, VStack } from 'native-base';
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import axios from 'axios'
+import { LinearGradient } from 'expo-linear-gradient'
 
 const TimelineItem = ({ item, index, data }) => {
   const isOddIndex = index % 2 === 1;
@@ -17,10 +18,10 @@ const TimelineItem = ({ item, index, data }) => {
   const formattedSTime = `${sTimeString.split(':')[0]}.${sTimeString.split(':')[1]}`;
   const formattedETime = `${eTimeString.split(':')[0]}.${eTimeString.split(':')[1]}`;
   return (
-    <VStack style={{ width: '100%' }}>
+    <VStack style={{ width: '100%', marginBottom: 50 }}>
       {index === 0 ? <>
-        <HStack >
-          <Text style={{ left: 200 }}>{formattedOrderDate}</Text>
+        <HStack marginTop={3}>
+          <Text style={[styles.description, { left: 200, fontSize: 15 }]}>{formattedOrderDate}</Text>
           <View style={styles.circle} />
         </HStack>
         <HStack>
@@ -34,16 +35,16 @@ const TimelineItem = ({ item, index, data }) => {
           </View>
         </HStack>
         <HStack>
-          <View style={[styles.item, isOddIndex ? styles.itemLeft : styles.itemLeft]}>
+          <View style={[styles.item1, isOddIndex ? styles.itemLeft : styles.itemLeft]}>
 
-            <View style={[styles.content, { paddingTop: 15, paddingLeft: 10 }]}>
+            <View style={[styles.content, { paddingTop: 10, paddingLeft: 10 }]}>
               <Text style={styles.description}>Plasiyerin Sipariş Tutarı: {data[0][0].OrderAmountPriceSalesman}</Text>
               <Text style={styles.description}>Sipariş Tutarı: {data[0][0].OrderAmountPriceDefault}  </Text>
             </View>
           </View>
         </HStack>
         <HStack>
-          <View style={[styles.item, isOddIndex ? styles.itemLeft : styles.itemRight]}>
+          <View style={[styles.item2, isOddIndex ? styles.itemLeft : styles.itemRight]}>
 
             <View style={[styles.content, { paddingLeft: 10, paddingTop: 30 }]}>
               <Text style={styles.description}>{data[1][1].CollectionType}: {data[1][1].Amount}</Text>
@@ -54,30 +55,26 @@ const TimelineItem = ({ item, index, data }) => {
 
         : index === 1 ? <>
           <HStack >
-            <Text style={{ left: 100 }}>{formattedCollectionDate}</Text>
+            <Text style={[styles.description, { left: 200, fontSize: 15 }]}>{formattedCollectionDate}</Text>
             <View style={styles.circle} />
-          </HStack>
-          <HStack>
-            <View style={[styles.item, isOddIndex ? styles.itemLeft : styles.itemRight]}>
-
-              <View style={[styles.content, { paddingLeft: 10, paddingTop: 30 }]}>
-                <Text style={styles.description}>{data[1][0].CollectionType}: {data[1][0].Amount}</Text>
-              </View>
-            </View>
           </HStack>
           <HStack>
             <View style={[styles.item, isOddIndex ? styles.itemRight : styles.itemLeft]}>
 
-              <View style={styles.content}>
 
-              </View>
             </View>
           </HStack>
           <HStack>
-            <View style={[styles.item, isOddIndex ? styles.itemLeft : styles.itemRight]}>
+            <View style={[styles.item1, isOddIndex ? styles.itemLeft : styles.itemLeft]}>
 
-              <View style={styles.content}>
 
+            </View>
+          </HStack>
+          <HStack>
+            <View style={[styles.item2, isOddIndex ? styles.itemRight : styles.itemLeft]}>
+
+              <View style={[styles.content, { paddingLeft: 10, paddingTop: 30 }]}>
+                <Text style={styles.description}>{data[1][0].CollectionType}: {data[1][0].Amount}</Text>
               </View>
             </View>
           </HStack>
@@ -125,15 +122,24 @@ const TimelineApp = () => {
   }
 
   return (
-    <View style={styles.timeline}>
-      <CustomerInfo customerData={customerData} />
-      <View style={styles.line} />
-      <FlatList
-        data={orderData}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item, index }) => <TimelineItem item={item} index={index} data={orderData} />}
-      />
-    </View>
+    <LinearGradient
+      colors={["rgba(209, 129, 255, 1)", "#ffff", "#ffff", "rgba(209, 129, 255, 1)"]}
+      start={{ x: 0.05, y: -8 }}
+      end={{ x: 3, y: 3 }}
+    >
+
+      <View style={styles.timeline}>
+        <CustomerInfo customerData={customerData} />
+        <View style={styles.line} />
+
+        <FlatList
+          data={orderData}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={({ item, index }) => <TimelineItem item={item} index={index} data={orderData} />}
+        />
+
+      </View>
+    </LinearGradient>
 
 
   );
@@ -168,7 +174,7 @@ const styles = StyleSheet.create({
   line: {
     width: 2,
     height: '100%',
-    backgroundColor: 'green',
+    backgroundColor: 'rgba(209, 129, 255, 1)',
 
     position: 'absolute',
     top: 175,
@@ -188,8 +194,46 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
     paddingVertical: 10,
+    borderWidth: 3,
+    borderColor: "rgba(255, 209, 0, 1)",
     marginBottom: 10,
-    backgroundColor: 'orange',
+    backgroundColor: 'rgba(255, 234, 140, 1)',
+    borderRadius: 10,
+    width: '100%',
+    height: 100,
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
+    marginTop: 20,
+
+  },
+  item1: {
+    flexDirection: 'row',
+    paddingVertical: 10,
+    borderWidth: 3,
+    borderColor: "rgba(0, 104, 255, 1)",
+    marginBottom: 10,
+    backgroundColor: 'rgba(155, 196, 255, 1)',
+    borderRadius: 10,
+    width: '100%',
+    height: 100,
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
+    elevation: 2,
+    marginTop: 20,
+
+  },
+  item2: {
+    flexDirection: 'row',
+    paddingVertical: 10,
+    borderWidth: 3,
+    borderColor: "rgba(14, 255, 0, 0.8)",
+    marginBottom: 10,
+    backgroundColor: 'rgba(168, 255, 163, 0.8)',
     borderRadius: 10,
     width: '100%',
     height: 100,
@@ -213,6 +257,7 @@ const styles = StyleSheet.create({
   description: {
     fontSize: 12,
     marginBottom: 2,
+    fontWeight: '700',
   },
   timestamp: {
     fontSize: 14,
@@ -222,14 +267,13 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     paddingVertical: 10,
     marginBottom: 10,
-    backgroundColor: 'orange',
     borderRadius: 10,
     width: '46%',
     shadowColor: 'black',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
-    elevation: 2,
+    elevation: 0,
     marginTop: 20,
     left: 5,
     marginRight: '50%',
@@ -240,14 +284,13 @@ const styles = StyleSheet.create({
     alignItems: 'flex-start',
     paddingVertical: 10,
     marginBottom: 10,
-    backgroundColor: 'orange',
     borderRadius: 10,
     width: '46%',
     shadowColor: 'black',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
-    elevation: 2,
+    elevation: 0,
     marginTop: 20,
     right: -10,
     marginLeft: '50%',
