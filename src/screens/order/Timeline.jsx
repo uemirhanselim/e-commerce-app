@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
 import axios from 'axios'
 import { LinearGradient } from 'expo-linear-gradient'
+import { useFonts, Montserrat_400Regular, Montserrat_700Bold, Montserrat_600SemiBold } from '@expo-google-fonts/montserrat'
 
 const TimelineItem = ({ item, index, data }) => {
   const isOddIndex = index % 2 === 1;
@@ -21,33 +22,41 @@ const TimelineItem = ({ item, index, data }) => {
     <VStack style={{ width: '100%', marginBottom: 50 }}>
       {index === 0 ? <>
         <HStack marginTop={3}>
-          <Text style={[styles.description, { left: 200, fontSize: 15 }]}>{formattedOrderDate}</Text>
+          <Text style={[styles.title, { top: 8, left: 220, fontSize: 18, color: 'purple' }]}>{formattedOrderDate}</Text>
           <View style={styles.circle} />
         </HStack>
         <HStack>
+          <View style={{ width: 20, position: 'absolute', height: 3, backgroundColor: 'purple', marginLeft: 190, marginTop: 66 }} />
           <View style={[styles.item, isOddIndex ? styles.itemLeft : styles.itemRight]}>
 
             <View style={[styles.content, { paddingLeft: 10 }]}>
               <Text style={styles.description}>Plansız ziyaret</Text>
-              <Text style={styles.description}>Açıklama: {data[2][0].Description}  </Text>
-              <Text style={styles.description}>Ziyaret Saati: {formattedSTime} - {formattedETime}</Text>
+              <Text style={styles.description}>Açıklama: {" "}
+                <Text style={styles.infoDesc}>{data[2][0].Description}</Text></Text>
+              <Text style={styles.description}>Ziyaret Saati: {" "}
+                <Text style={styles.infoDesc}>{formattedSTime} - {formattedETime}</Text></Text>
             </View>
           </View>
         </HStack>
         <HStack>
+          <View style={{ width: 20, position: 'absolute', height: 3, backgroundColor: 'purple', marginLeft: 166, marginTop: 66 }} />
           <View style={[styles.item1, isOddIndex ? styles.itemLeft : styles.itemLeft]}>
 
             <View style={[styles.content, { paddingTop: 10, paddingLeft: 10 }]}>
-              <Text style={styles.description}>Plasiyerin Sipariş Tutarı: {data[0][0].OrderAmountPriceSalesman}</Text>
-              <Text style={styles.description}>Sipariş Tutarı: {data[0][0].OrderAmountPriceDefault}  </Text>
+              <Text style={styles.description}>Plasiyerin Sipariş Tutarı: {" "}
+                <Text style={styles.infoDesc}>{data[0][0].OrderAmountPriceSalesman}</Text></Text>
+              <Text style={styles.description}>Sipariş Tutarı: {" "}
+                <Text style={styles.infoDesc}>{data[0][0].OrderAmountPriceDefault}</Text></Text>
             </View>
           </View>
         </HStack>
         <HStack>
+          <View style={{ width: 20, position: 'absolute', height: 3, backgroundColor: 'purple', marginLeft: 190, marginTop: 66 }} />
           <View style={[styles.item2, isOddIndex ? styles.itemLeft : styles.itemRight]}>
 
             <View style={[styles.content, { paddingLeft: 10, paddingTop: 30 }]}>
-              <Text style={styles.description}>{data[1][1].CollectionType}: {data[1][1].Amount}</Text>
+              <Text style={styles.description}>{data[1][1].CollectionType}: {" "}
+                <Text style={styles.infoDesc}>{data[1][1].Amount}</Text></Text>
             </View>
           </View>
         </HStack>
@@ -55,26 +64,30 @@ const TimelineItem = ({ item, index, data }) => {
 
         : index === 1 ? <>
           <HStack >
-            <Text style={[styles.description, { left: 200, fontSize: 15 }]}>{formattedCollectionDate}</Text>
+            <Text style={[styles.title, { top: 8, left: 220, fontSize: 18, color: 'purple' }]}>{formattedCollectionDate}</Text>
             <View style={styles.circle} />
           </HStack>
           <HStack>
+            <View style={{ width: 20, position: 'absolute', height: 3, backgroundColor: 'purple', marginLeft: 190, marginTop: 66 }} />
             <View style={[styles.item, isOddIndex ? styles.itemRight : styles.itemLeft]}>
 
 
             </View>
           </HStack>
           <HStack>
+            <View style={{ width: 20, position: 'absolute', height: 3, backgroundColor: 'purple', marginLeft: 166, marginTop: 66 }} />
             <View style={[styles.item1, isOddIndex ? styles.itemLeft : styles.itemLeft]}>
 
 
             </View>
           </HStack>
           <HStack>
+            <View style={{ width: 20, position: 'absolute', height: 3, backgroundColor: 'purple', marginLeft: 190, marginTop: 66 }} />
             <View style={[styles.item2, isOddIndex ? styles.itemRight : styles.itemLeft]}>
 
               <View style={[styles.content, { paddingLeft: 10, paddingTop: 30 }]}>
-                <Text style={styles.description}>{data[1][0].CollectionType}: {data[1][0].Amount}</Text>
+                <Text style={styles.description}>{data[1][0].CollectionType}: {" "}
+                  <Text style={styles.infoDesc}>{data[1][0].Amount}</Text></Text>
               </View>
             </View>
           </HStack>
@@ -88,6 +101,9 @@ const TimelineItem = ({ item, index, data }) => {
 const TimelineApp = () => {
   const [customerData, setCustomerData] = useState({})
   const [orderData, setOrderData] = useState([])
+  let [fontsLoaded] = useFonts({
+    Montserrat_400Regular, Montserrat_700Bold, Montserrat_600SemiBold
+  });
 
   const postData = async () => {
 
@@ -117,7 +133,7 @@ const TimelineApp = () => {
     postData();
   }, [])
 
-  if (Object.keys(customerData).length === 0 && orderData.length === 0) {
+  if (Object.keys(customerData).length === 0 && orderData.length === 0 && !fontsLoaded) {
     return null;
   }
 
@@ -130,6 +146,7 @@ const TimelineApp = () => {
 
       <View style={styles.timeline}>
         <CustomerInfo customerData={customerData} />
+        <View style={{ width: 300, height: 3, backgroundColor: 'purple' }} />
         <View style={styles.line} />
 
         <FlatList
@@ -139,26 +156,66 @@ const TimelineApp = () => {
         />
 
       </View>
+      <InfoBar />
     </LinearGradient>
 
 
   );
 };
 
+const InfoBar = () => {
+  return (
+    <View style={{
+      position: 'absolute', height: 30,
+      width: 180, bottom: 100, left: 10, flexDirection: 'row',
+    }}>
+      <View style={[styles.info, { backgroundColor: 'rgba(255, 234, 140, 1)', borderBottomLeftRadius: 10, borderTopLeftRadius: 10 }]}>
+        <Text style={styles.description}>Ziyaret</Text>
+      </View>
+      <View style={[styles.info, { backgroundColor: 'rgba(155, 196, 255, 1)' }]}>
+        <Text style={styles.description}>Sipariş</Text>
+      </View>
+      <View style={[styles.info, { backgroundColor: 'rgba(155, 255, 163, 1)', borderBottomRightRadius: 10, borderTopRightRadius: 10 }]}>
+        <Text style={styles.description}>Tahsilat</Text>
+      </View>
+    </View>
+  )
+}
+
 const CustomerInfo = ({ customerData }) => {
   return (
     <>
-      <Text style={{ paddingTop: 60, alignItems: 'flex-start' }}>{customerData.CustomerId} - {customerData.CustomerName}</Text>
-      <Text >{customerData.CustomerName} Adresi / {customerData.CustomerProvince}</Text>
-      <Text >Bakiye: {customerData.CustomerBalance}</Text>
-      <Text >CARİ RİSK: {customerData.CustomerRisk}</Text>
+      <Text style={{
+        paddingTop: 40, alignItems: 'flex-start', fontSize: 18, marginBottom: 8,
+        fontFamily: 'Montserrat_700Bold', color: 'purple'
+      }}>{customerData.CustomerName}</Text>
+      <View>
 
-      <Text style={{ marginTop: 10, marginBottom: 5, fontWeight: 'bold', color: 'purple' }} >{customerData.SalesmanId} - {customerData.SalesmanName}</Text>
-    </>
+        <HStack>
+          <Text style={[styles.title]} >Numara: {" "}
+            <Text style={styles.infoDesc}>{customerData.CustomerId}</Text>  -</Text>
+          <Text style={styles.title}>  Adres: {" "}
+            <Text style={styles.infoDesc}>{customerData.CustomerProvince}</Text></Text>
+        </HStack>
+        <HStack>
+          <Text style={[styles.title]}>Bakiye: {" "}
+            <Text style={styles.infoDesc}>{customerData.CustomerRisk}</Text>  -</Text>
+          <Text style={styles.title}>  Cari Risk: {" "}
+            <Text style={styles.infoDesc}>{customerData.CustomerRisk}</Text></Text>
+        </HStack>
+
+
+      </View>
+      <Text style={{ fontFamily: 'Montserrat_700Bold', marginTop: 10, marginBottom: 5, color: 'purple' }} >{customerData.SalesmanId} - {customerData.SalesmanName}</Text></>
   )
 }
 
 const styles = StyleSheet.create({
+  info: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   container: {
     flexGrow: 1,
     backgroundColor: '#F5F5F5',
@@ -172,30 +229,30 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   line: {
-    width: 2,
+    width: 5,
     height: '100%',
     backgroundColor: 'rgba(209, 129, 255, 1)',
 
     position: 'absolute',
-    top: 175,
+    top: 147,
     bottom: 0,
     marginLeft: 0,
   },
   circle: {
-    width: 15,
-    height: 15,
-    borderRadius: 10,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     backgroundColor: 'purple',
     position: 'absolute',
     left: '50%',
     top: 2,
-    marginLeft: -8,
+    marginLeft: -20,
   },
   item: {
     flexDirection: 'row',
     paddingVertical: 10,
     borderWidth: 3,
-    borderColor: "rgba(255, 209, 0, 1)",
+    borderColor: "rgba(255, 209, 104, 1)",
     marginBottom: 10,
     backgroundColor: 'rgba(255, 234, 140, 1)',
     borderRadius: 10,
@@ -231,9 +288,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 10,
     borderWidth: 3,
-    borderColor: "rgba(14, 255, 0, 0.8)",
+    borderColor: "rgba(0, 255, 124, 1)",
     marginBottom: 10,
-    backgroundColor: 'rgba(168, 255, 163, 0.8)',
+    backgroundColor: 'rgba(155, 255, 163, 1)',
     borderRadius: 10,
     width: '100%',
     height: 100,
@@ -250,14 +307,21 @@ const styles = StyleSheet.create({
     padding: 2,
   },
   title: {
-    fontWeight: 'bold',
-    fontSize: 18,
-    marginBottom: 5,
+    fontSize: 13,
+    marginBottom: 2,
+    fontFamily: 'Montserrat_700Bold'
+  },
+  infoDesc: {
+    fontSize: 13,
+    marginBottom: 2,
+
+    fontFamily: 'Montserrat_400Regular'
   },
   description: {
     fontSize: 12,
     marginBottom: 2,
-    fontWeight: '700',
+
+    fontFamily: 'Montserrat_600SemiBold'
   },
   timestamp: {
     fontSize: 14,
@@ -282,7 +346,7 @@ const styles = StyleSheet.create({
   itemRight: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    paddingVertical: 10,
+    paddingVertical: 5,
     marginBottom: 10,
     borderRadius: 10,
     width: '46%',
