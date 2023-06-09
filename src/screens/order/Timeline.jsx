@@ -22,11 +22,10 @@ const TimelineItem = ({ item, index, data }) => {
     <VStack style={{ width: '100%', marginBottom: 50 }}>
       {index === 0 ? <>
         <HStack marginTop={3}>
-          <Text style={[styles.title, { top: 8, left: 220, fontSize: 18, color: 'purple' }]}>{formattedOrderDate}</Text>
+          <Text style={[styles.title, { top: 8, left: '850%', fontSize: 18, color: 'rgb(130, 148, 196)' }]}>{formattedOrderDate}</Text>
           <View style={styles.circle} />
         </HStack>
         <HStack>
-          <View style={{ width: 20, position: 'absolute', height: 3, backgroundColor: 'purple', marginLeft: 190, marginTop: 66 }} />
           <View style={[styles.item, isOddIndex ? styles.itemLeft : styles.itemRight]}>
 
             <View style={[styles.content, { paddingLeft: 10 }]}>
@@ -39,7 +38,6 @@ const TimelineItem = ({ item, index, data }) => {
           </View>
         </HStack>
         <HStack>
-          <View style={{ width: 20, position: 'absolute', height: 3, backgroundColor: 'purple', marginLeft: 166, marginTop: 66 }} />
           <View style={[styles.item1, isOddIndex ? styles.itemLeft : styles.itemLeft]}>
 
             <View style={[styles.content, { paddingTop: 10, paddingLeft: 10 }]}>
@@ -51,7 +49,6 @@ const TimelineItem = ({ item, index, data }) => {
           </View>
         </HStack>
         <HStack>
-          <View style={{ width: 20, position: 'absolute', height: 3, backgroundColor: 'purple', marginLeft: 190, marginTop: 66 }} />
           <View style={[styles.item2, isOddIndex ? styles.itemLeft : styles.itemRight]}>
 
             <View style={[styles.content, { paddingLeft: 10, paddingTop: 30 }]}>
@@ -64,25 +61,22 @@ const TimelineItem = ({ item, index, data }) => {
 
         : index === 1 ? <>
           <HStack >
-            <Text style={[styles.title, { top: 8, left: 220, fontSize: 18, color: 'purple' }]}>{formattedCollectionDate}</Text>
+            <Text style={[styles.title, { top: 8, left: '850%', fontSize: 18, color: 'rgb(130, 148, 196)' }]}>{formattedCollectionDate}</Text>
             <View style={styles.circle} />
           </HStack>
           <HStack>
-            <View style={{ width: 20, position: 'absolute', height: 3, backgroundColor: 'purple', marginLeft: 190, marginTop: 66 }} />
             <View style={[styles.item, isOddIndex ? styles.itemRight : styles.itemLeft]}>
 
 
             </View>
           </HStack>
           <HStack>
-            <View style={{ width: 20, position: 'absolute', height: 3, backgroundColor: 'purple', marginLeft: 166, marginTop: 66 }} />
             <View style={[styles.item1, isOddIndex ? styles.itemLeft : styles.itemLeft]}>
 
 
             </View>
           </HStack>
           <HStack>
-            <View style={{ width: 20, position: 'absolute', height: 3, backgroundColor: 'purple', marginLeft: 190, marginTop: 66 }} />
             <View style={[styles.item2, isOddIndex ? styles.itemRight : styles.itemLeft]}>
 
               <View style={[styles.content, { paddingLeft: 10, paddingTop: 30 }]}>
@@ -139,14 +133,14 @@ const TimelineApp = () => {
 
   return (
     <LinearGradient
-      colors={["rgba(209, 129, 255, 1)", "#ffff", "#ffff", "rgba(209, 129, 255, 1)"]}
+      colors={["rgb(255, 234, 210)", "#ffff", "#ffff", "rgb(255, 234, 210)"]}
       start={{ x: 0.05, y: -8 }}
       end={{ x: 3, y: 3 }}
     >
 
       <View style={styles.timeline}>
         <CustomerInfo customerData={customerData} />
-        <View style={{ width: 300, height: 3, backgroundColor: 'purple' }} />
+        <View style={{ width: 300, height: 3, backgroundColor: 'rgb(172, 177, 214)' }} />
         <View style={styles.line} />
 
         <FlatList
@@ -169,13 +163,13 @@ const InfoBar = () => {
       position: 'absolute', height: 30,
       width: 180, bottom: 100, left: 10, flexDirection: 'row',
     }}>
-      <View style={[styles.info, { backgroundColor: 'rgba(255, 234, 140, 1)', borderBottomLeftRadius: 10, borderTopLeftRadius: 10 }]}>
+      <View style={[styles.info, { backgroundColor: 'rgb(130, 148, 196)', borderBottomLeftRadius: 10, borderTopLeftRadius: 10 }]}>
         <Text style={styles.description}>Ziyaret</Text>
       </View>
-      <View style={[styles.info, { backgroundColor: 'rgba(155, 196, 255, 1)' }]}>
+      <View style={[styles.info, { backgroundColor: 'rgb(172, 177, 214)' }]}>
         <Text style={styles.description}>Sipariş</Text>
       </View>
-      <View style={[styles.info, { backgroundColor: 'rgba(155, 255, 163, 1)', borderBottomRightRadius: 10, borderTopRightRadius: 10 }]}>
+      <View style={[styles.info, { backgroundColor: 'rgb(219, 223, 234)', borderBottomRightRadius: 10, borderTopRightRadius: 10 }]}>
         <Text style={styles.description}>Tahsilat</Text>
       </View>
     </View>
@@ -187,7 +181,7 @@ const CustomerInfo = ({ customerData }) => {
     <>
       <Text style={{
         paddingTop: 40, alignItems: 'flex-start', fontSize: 18, marginBottom: 8,
-        fontFamily: 'Montserrat_700Bold', color: 'purple'
+        fontFamily: 'Montserrat_700Bold', color: 'rgb(130, 148, 196)'
       }}>{customerData.CustomerName}</Text>
       <View>
 
@@ -206,7 +200,7 @@ const CustomerInfo = ({ customerData }) => {
 
 
       </View>
-      <Text style={{ fontFamily: 'Montserrat_700Bold', marginTop: 10, marginBottom: 5, color: 'purple' }} >{customerData.SalesmanId} - {customerData.SalesmanName}</Text></>
+      <Text style={{ fontFamily: 'Montserrat_700Bold', marginTop: 10, marginBottom: 5, color: 'rgb(130, 148, 196)' }} >{customerData.SalesmanId} - {customerData.SalesmanName}</Text></>
   )
 }
 
@@ -231,7 +225,7 @@ const styles = StyleSheet.create({
   line: {
     width: 5,
     height: '100%',
-    backgroundColor: 'rgba(209, 129, 255, 1)',
+    backgroundColor: 'rgb(172, 177, 214)',
 
     position: 'absolute',
     top: 147,
@@ -242,7 +236,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: 'purple',
+    backgroundColor: 'rgb(130, 148, 196)',
     position: 'absolute',
     left: '50%',
     top: 2,
@@ -251,10 +245,8 @@ const styles = StyleSheet.create({
   item: {
     flexDirection: 'row',
     paddingVertical: 10,
-    borderWidth: 3,
-    borderColor: "rgba(255, 209, 104, 1)",
     marginBottom: 10,
-    backgroundColor: 'rgba(255, 234, 140, 1)',
+    backgroundColor: 'rgb(130, 148, 196)',
     borderRadius: 10,
     width: '100%',
     height: 100,
@@ -269,10 +261,8 @@ const styles = StyleSheet.create({
   item1: {
     flexDirection: 'row',
     paddingVertical: 10,
-    borderWidth: 3,
-    borderColor: "rgba(0, 104, 255, 1)",
     marginBottom: 10,
-    backgroundColor: 'rgba(155, 196, 255, 1)',
+    backgroundColor: 'rgb(172, 177, 214)',
     borderRadius: 10,
     width: '100%',
     height: 100,
@@ -287,10 +277,8 @@ const styles = StyleSheet.create({
   item2: {
     flexDirection: 'row',
     paddingVertical: 10,
-    borderWidth: 3,
-    borderColor: "rgba(0, 255, 124, 1)",
     marginBottom: 10,
-    backgroundColor: 'rgba(155, 255, 163, 1)',
+    backgroundColor: 'rgb(219, 223, 234)',
     borderRadius: 10,
     width: '100%',
     height: 100,
