@@ -4,7 +4,7 @@ const Colors = {
     orange: "#f3632f",
     lightOrange: "#FF9B56",
     lightBlack: "#bcbcbc",
-    red: "#FF0000"
+    red: "#FF0000",
 }
 
 export default Colors
