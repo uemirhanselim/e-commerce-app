@@ -10,7 +10,17 @@ export const DeleteFromCard = (id) => ({
     payload: id
 })
 
-export const UpdateURI = (uri) => ({
-    type: actionTypes.UPDATE_URI,
-    payload: uri
+export const SetVisite = (value) => ({
+    type: actionTypes.SET_VISITE,
+    payload: value
+})
+
+export const SetOrder = (value) => ({
+    type: actionTypes.SET_ORDER,
+    payload: value
+})
+
+export const SetPayment = (value) => ({
+    type: actionTypes.SET_PAYMENT,
+    payload: value
 })
