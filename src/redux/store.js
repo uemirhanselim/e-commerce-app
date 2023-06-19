@@ -3,10 +3,16 @@ import thunk from "redux-thunk";
 import logger from "redux-logger";
 import ProductReducer from "./reducers/reducer";
 import CameraReducer from "./reducers/cameraReducer";
+import VisiteReducer from "./reducers/VisiteReducer";
+import OrderReducer from "./reducers/orderReducer";
+import PaymentReducer from "./reducers/paymentReducer";
 
 const reducers = combineReducers({
     ProductReducer,
     CameraReducer,
+    VisiteReducer,
+    OrderReducer,
+    PaymentReducer,
 })
 
 const store = createStore(reducers, applyMiddleware(thunk, logger));
