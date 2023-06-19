@@ -42,8 +42,8 @@ export default function App() {
     <Provider store={store}>
 
       <NativeBaseProvider>
-        <Timeline />
-        {/* <StackNavigator linking={linking}></StackNavigator> */}
+        
+         <StackNavigator linking={linking}></StackNavigator> 
       </NativeBaseProvider>
     </Provider>
   );
