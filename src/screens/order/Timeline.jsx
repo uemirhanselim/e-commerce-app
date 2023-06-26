@@ -213,9 +213,9 @@ const InfoBar = ({ theme, navigation }) => {
 
         width: 220, flexDirection: 'row',
       }}>
-        <View style={[styles.info, {
+        <View style={[visite === true && order === false && payment === false ? styles.unselectedInfo : styles.info, {
           backgroundColor: theme === "dark" ? 'rgb(130, 148, 196)' : 'rgb(47, 143, 157)',
-          borderBottomLeftRadius: 10, borderTopLeftRadius: 10
+          borderBottomLeftRadius: 10, borderTopLeftRadius: 10,
         }]}>
           <Text style={styles.dscBar} onPress={() => {
             if (visite === true && order === false && payment === false) {
@@ -228,7 +228,9 @@ const InfoBar = ({ theme, navigation }) => {
             }
           }}>Ziyaret</Text>
         </View>
-        <View style={[styles.info, { backgroundColor: theme === "dark" ? 'rgb(172, 177, 214)' : 'rgb(59, 172, 182)' }]}>
+        <View style={[visite === false && order === true && payment === false ? styles.unselectedInfo : styles.info, {
+          backgroundColor: theme === "dark" ? 'rgb(172, 177, 214)' : 'rgb(59, 172, 182)',
+        }]}>
           <Text style={styles.dscBar} onPress={() => {
             if (visite === false && order === true && payment === false) {
               dispatch(SetVisite(true))
@@ -240,7 +242,7 @@ const InfoBar = ({ theme, navigation }) => {
             }
           }}>Sipariş</Text>
         </View>
-        <View style={[styles.info, {
+        <View style={[visite === false && order === false && payment === true ? styles.unselectedInfo : styles.info, {
           backgroundColor: theme === "dark" ? 'rgb(219, 223, 234)' : 'rgb(130, 219, 216)',
           borderBottomRightRadius: 10, borderTopRightRadius: 10,
         }]}>
@@ -304,6 +306,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  unselectedInfo: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: 'rgb(81 102 207)',
   },
   container: {
     flexGrow: 1,
