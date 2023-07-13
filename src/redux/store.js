@@ -6,6 +6,10 @@ import CameraReducer from "./reducers/cameraReducer";
 import VisiteReducer from "./reducers/VisiteReducer";
 import OrderReducer from "./reducers/orderReducer";
 import PaymentReducer from "./reducers/paymentReducer";
+import StartDateReducer from './reducers/startDateReducer';
+import EndDateReducer from './reducers/endDateReducer';
+import FilterOnReducer from "./reducers/filterOn";
+import IsSheetOpenReducer from "./reducers/isSheetOpenReducer";
 
 const reducers = combineReducers({
     ProductReducer,
@@ -13,6 +17,10 @@ const reducers = combineReducers({
     VisiteReducer,
     OrderReducer,
     PaymentReducer,
+    StartDateReducer,
+    EndDateReducer,
+    FilterOnReducer,
+    IsSheetOpenReducer
 })
 
 const store = createStore(reducers, applyMiddleware(thunk, logger));

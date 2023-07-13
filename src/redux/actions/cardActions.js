@@ -24,3 +24,23 @@ export const SetPayment = (value) => ({
     type: actionTypes.SET_PAYMENT,
     payload: value
 })
+
+export const SetStartDate = (date) => ({
+    type: actionTypes.SET_START_DATE,
+    payload: date
+})
+
+export const SetEndDate = (date) => ({
+    type: actionTypes.SET_END_DATE,
+    payload: date
+})
+
+export const SetFilterOn = (value) => ({
+    type: actionTypes.SET_FILTER_ON,
+    payload: value
+})
+
+export const SetIsSheetOpen = (value) => ({
+    type: actionTypes.SET_IS_SHEET_OPEN,
+    payload: value
+})
