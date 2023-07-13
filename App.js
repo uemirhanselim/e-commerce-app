@@ -8,6 +8,7 @@ import * as Location from 'expo-location';
 import { StoreData } from './src/storage/ProfileStorage';
 import Timeline from './src/screens/order/Timeline';
 
+
 export default function App() {
 
   useEffect(() => {
@@ -39,13 +40,17 @@ export default function App() {
 
 
   return (
-    <Provider store={store}>
+    
+ 
+      <Provider store={store}>
 
       <NativeBaseProvider>
         
          <StackNavigator linking={linking}></StackNavigator> 
       </NativeBaseProvider>
     </Provider>
+ 
+    
   );
 }
 
