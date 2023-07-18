@@ -65,11 +65,9 @@ const TimelineItem = ({ item, index, data, theme }) => {
 
             : <></>) :
             isBetween(date) === false && isBetween(collectionDate) === true ? (index === 1 ? BodyItem(theme, dateFormatter, collectionDate, visite, order, payment, formatter, data, 0) : <></>) :
-              (index === 0 ? BodyItem(theme, dateFormatter, date, visite, order, payment, formatter, data, 1)
-
-                : index === 1 ? BodyItem(theme, dateFormatter, collectionDate, visite, order, payment, formatter, data, 0) : <></>)
+              <></>
       }
-      <Box style={{ height: 50 }} />
+      <Box style={{ height: 200 }} />
     </VStack>
   );
 };
@@ -284,21 +282,21 @@ const BottomSheetComponent = ({ sheetRef, theme }) => {
   }
 
   function clearOnPress() {
+    sheetRef.current.close()
+    dispatch(SetIsSheetOpen(false))
     dispatch(SetFilterOn(false))
     dispatch(SetEndDate(new Date()))
     dispatch(SetStartDate(new Date()))
     setStartDate(new Date())
     setEndDate(new Date())
-    sheetRef.current.close()
-    dispatch(SetIsSheetOpen(false))
   }
 
   function filterOnPress() {
+    sheetRef.current.close()
+    dispatch(SetIsSheetOpen(false))
     dispatch(SetFilterOn(true))
     dispatch(SetEndDate(endDate))
     dispatch(SetStartDate(startDate))
-    sheetRef.current.close()
-    dispatch(SetIsSheetOpen(false))
   }
 
   return (
@@ -312,7 +310,7 @@ const BottomSheetComponent = ({ sheetRef, theme }) => {
       }}
       backgroundStyle={{ backgroundColor: theme === "dark" ? 'rgb(172, 147, 214)' : 'rgb(100, 172, 182)', }}
     >
-      <SafeAreaView style={{ flex: 0.8, margin: 10, justifyContent: 'space-between', alignItems: 'flex-start', flexDirection: 'column' }}>
+      <SafeAreaView style={{ flex: 1, margin: 10, justifyContent: 'space-between', alignItems: 'flex-start', flexDirection: 'column' }}>
         <View>
           <Text style={[styles.title, { color: 'white', fontSize: 16, marginBottom: 10 }]}>Tarih Aralığı</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -343,10 +341,13 @@ const BottomSheetComponent = ({ sheetRef, theme }) => {
             </Pressable>
           </View>
         </View>
-        <View style={{ flexDirection: 'row' }}>
-        <BottomSheetButton label={"Temizle"} theme={theme} onPress={clearOnPress}/>
-          <Spacer/>
-          <BottomSheetButton label={"Filtrele"} theme={theme} onPress={filterOnPress}/>
+        <View style={{ flexDirection: 'row', flex: 0.25 }}>
+          <BottomSheetButton label={"Temizle"} theme={theme} onPress={clearOnPress} />
+          <Spacer />
+          <BottomSheetButton label={"Filtrele"} theme={theme} onPress={filterOnPress}
+            isActive={(Math.abs(endDate.getTime() - new Date().getTime()) <= tolerance) === false &&
+              (Math.abs(startDate.getTime() - new Date().getTime()) <= tolerance) === false
+            } />
         </View>
 
       </SafeAreaView>
@@ -362,8 +363,9 @@ const BottomSheetComponent = ({ sheetRef, theme }) => {
             setShowEndDatePicker(false)
             return;
           } else {
-            setEndDate(selectedDate)
             setShowEndDatePicker(false)
+            setEndDate(selectedDate)
+
           }
 
 
@@ -380,8 +382,8 @@ const BottomSheetComponent = ({ sheetRef, theme }) => {
             setShowStartDatePicker(false)
             return;
           } else {
-            setStartDate(selectedDate)
             setShowStartDatePicker(false)
+            setStartDate(selectedDate)
           }
 
 
@@ -408,11 +410,16 @@ function BodyItem(theme, dateFormatter, collectionDate, visite, order, payment, 
   return <>
 
 
-    <View style={[styles.circle, { borderColor: theme === "dark" ? 'rgb(130, 148, 196)' : 'rgb(47, 143, 157)' }]}>
+    <View style={[styles.circle, firstItem !== 1 ? {
+      borderColor: theme === "dark" ? 'rgb(130, 148, 196)' : 'rgb(47, 143, 157)',
+      marginTop: -100
+    } : {
+      borderColor: theme === "dark" ? 'rgb(130, 148, 196)' : 'rgb(47, 143, 157)'
+    }]}>
       <Text style={[styles.title, { fontSize: 18, color: theme === "dark" ? 'rgb(130, 148, 196)' : 'rgb(47, 143, 157)' }]}>{dateFormatter(collectionDate)}</Text>
     </View>
 
-    <HStack marginTop={10}>
+    <HStack marginTop={firstItem !== 1 ? -12 : 12}>
       <View style={[theme === "dark" ? styles.darkItem : styles.lightItem, styles.itemRight,
       { display: visite === true ? 'flex' : 'none' }
       ]}>
@@ -468,7 +475,7 @@ function BodyItem(theme, dateFormatter, collectionDate, visite, order, payment, 
     </HStack>
     <HStack>
       <View style={[theme === "dark" ? styles.darkItem2 : styles.lightItem2, styles.itemRight,
-      { display: payment === true ? 'flex' : 'none' }
+      { display: payment === true ? 'flex' : 'none', marginBottom: 0 }
       ]}>
 
         <View style={[styles.dividedItem, { borderLeftWidth: 0, borderTopWidth: 0, borderBottomWidth: 0, borderRightWidth: 0, width: '100%' }]}>
