@@ -1,6 +1,6 @@
 import { Box, HStack, Pressable, Spacer, VStack } from 'native-base';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, SafeAreaView } from 'react-native';
+import { View, Text, FlatList, StyleSheet, SafeAreaView, PixelRatio } from 'react-native';
 import axios from 'axios'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useFonts, Montserrat_500Medium_Italic, Montserrat_700Bold, Montserrat_600SemiBold } from '@expo-google-fonts/montserrat'
@@ -127,7 +127,6 @@ const Timeline = () => {
   if (Object.keys(customerData).length === 0 && orderData.length === 0 && !fontsLoaded) {
     return null;
   }
-
   return (
     <GestureHandlerRootView>
       <LinearGradient
@@ -138,7 +137,10 @@ const Timeline = () => {
       >
 
         <SafeAreaView style={[styles.timeline, { opacity: isSheetOpen ? 0.3 : 1 }]}>
-          <View style={[styles.line, { backgroundColor: theme === "dark" ? 'rgb(172, 177, 214)' : 'rgb(59, 172, 182)' }]} />
+          <View style={[styles.line, {
+            backgroundColor: theme === "dark" ? 'rgb(172, 177, 214)' : 'rgb(59, 172, 182)',
+            opacity: isSheetOpen ? 0.1 : 1 
+          }]} />
           <CustomerInfo customerData={customerData} theme={theme} navigation={navigation} sheetRef={sheetRef} />
           <View style={{ width: 300, height: 3, backgroundColor: theme === "dark" ? 'rgb(172, 177, 214)' : 'rgb(59, 172, 182)' }} />
 
@@ -407,6 +409,7 @@ function BodyItem(theme, dateFormatter, collectionDate, visite, order, payment, 
     style: 'currency',
     currency: 'TRY',
   });
+
   return <>
 
 
@@ -424,7 +427,7 @@ function BodyItem(theme, dateFormatter, collectionDate, visite, order, payment, 
       { display: visite === true ? 'flex' : 'none' }
       ]}>
         <View style={[styles.dividedItem, { borderLeftWidth: 0, borderTopWidth: 0, borderBottomWidth: 0, borderRightWidth: 0, width: '100%' }]}>
-          <Text style={styles.description}>Ziyaret</Text>
+          <Text style={styles.title}>Ziyaret</Text>
         </View>
 
         <View style={{ flexDirection: 'row' }}>
@@ -451,12 +454,12 @@ function BodyItem(theme, dateFormatter, collectionDate, visite, order, payment, 
       { display: order === true ? 'flex' : 'none' }
       ]}>
         <View style={[styles.dividedItem, { borderLeftWidth: 0, borderTopWidth: 0, borderBottomWidth: 0, borderRightWidth: 0, width: '100%' }]}>
-          <Text style={styles.description}>Sipariş</Text>
+          <Text style={styles.title}>Sipariş</Text>
         </View>
 
         <View style={{ flexDirection: 'row' }}>
           <View style={[styles.dividedItem, { borderLeftWidth: 0, borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
-            <Text style={[styles.description, { textAlign: 'center' }]}>Plasiyerin Tutarı:</Text>
+            <Text style={[styles.description, { textAlign: 'center' }]}>Sipariş Tutarı</Text>
           </View>
           <View style={[styles.dividedItem, { borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
             {firstItem === 1 ? <Text style={styles.infoDesc}>{formatter(formattedPlasiyerCost)}</Text> : null}
@@ -464,7 +467,7 @@ function BodyItem(theme, dateFormatter, collectionDate, visite, order, payment, 
         </View>
         <View style={{ flexDirection: 'row' }}>
           <View style={[styles.dividedItem, { borderLeftWidth: 0, borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
-            <Text style={[styles.description, { textAlign: 'center' }]}>Sipariş Tutarı:</Text>
+            <Text style={[styles.description, { textAlign: 'center' }]}>Sistem Sipariş Tutarı</Text>
           </View>
           <View style={[styles.dividedItem, { borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
             {firstItem === 1 ? <Text style={styles.infoDesc}>{formatter(data[0][0].OrderAmountPriceDefault)}</Text> : null}
@@ -479,7 +482,7 @@ function BodyItem(theme, dateFormatter, collectionDate, visite, order, payment, 
       ]}>
 
         <View style={[styles.dividedItem, { borderLeftWidth: 0, borderTopWidth: 0, borderBottomWidth: 0, borderRightWidth: 0, width: '100%' }]}>
-          <Text style={styles.description}>Tahsilat</Text>
+          <Text style={styles.title}>Tahsilat</Text>
         </View>
 
         <View style={{ flexDirection: 'row' }}>
@@ -503,6 +506,8 @@ function BodyItem(theme, dateFormatter, collectionDate, visite, order, payment, 
     </HStack>
   </>;
 }
+const fontScale = PixelRatio.getFontScale();
+const getFontSize = size => size / fontScale;
 
 const styles = StyleSheet.create({
   dividedItem: {
@@ -540,7 +545,6 @@ const styles = StyleSheet.create({
     width: 5,
     height: '100%',
     position: 'absolute',
-    top: '19%',
     bottom: 0,
     marginLeft: 0,
   },
@@ -668,7 +672,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Montserrat_600SemiBold'
   },
   description: {
-    fontSize: 12,
+    fontSize: getFontSize(10),
     marginBottom: 2,
 
     fontFamily: 'Montserrat_600SemiBold'
