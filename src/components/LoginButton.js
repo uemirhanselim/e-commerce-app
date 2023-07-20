@@ -1,13 +1,15 @@
 import { View, Text } from "native-base"
-import { StyleSheet } from "react-native"
+import { Pressable, StyleSheet } from "react-native"
 
-const LoginButton = () => {
+const LoginButton = ({onPress}) => {
     return (
-        <View style={style.button}>
+        <Pressable onPress={onPress}>
+            <View style={style.button}>
             <Text style={style.text}>
                 Giriş Yap
             </Text>
         </View>
+        </Pressable>
     )
 }
 
