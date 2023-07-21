@@ -3,14 +3,13 @@ import { useState } from "react"
 import { StyleSheet } from "react-native"
 import { TextInput } from "react-native-paper"
 
-const LoginEmailField = ({}) => {
-    const [text, setText] = useState("")
+const LoginEmailField = ({ email, setEmail }) => {
     return (
         <TextInput
             style={style.container}
             label="Email"
-            value={text}
-            onChangeText={text => setText(text)}
+            value={email}
+            onChangeText={email => setEmail(email)}
             underlineStyle={{
                 backgroundColor: 'transparent',
             }}
@@ -18,22 +17,29 @@ const LoginEmailField = ({}) => {
     )
 }
 
-const LoginPassField = ({}) => {
-    const [text, setText] = useState("")
+const LoginPassField = ({ password, setPassword }) => {
     const [visible, setVisible] = useState(false)
     return (
         <TextInput
             style={style.container}
             label="Şifre"
-            value={text}
+            value={password}
             secureTextEntry={visible}
-            onChangeText={text => setText(text)}
-            right={visible ? <TextInput.Icon icon="eye-off"/> : <TextInput.Icon icon="eye"/>}
+            onChangeText={password => setPassword(password)}
+            right={visible ? showPassword("eye-off")
+                : showPassword("eye")
+            }
             underlineStyle={{
                 backgroundColor: 'transparent',
             }}
         />
     )
+
+
+
+    function showPassword(iconName) {
+        return <TextInput.Icon icon={iconName} onPress={() => setVisible(!visible)} />
+    }
 }
 
 const style = StyleSheet.create({
@@ -44,4 +50,4 @@ const style = StyleSheet.create({
     }
 })
 
-export {LoginEmailField, LoginPassField}
+export { LoginEmailField, LoginPassField }
