@@ -10,6 +10,8 @@ import AddProduct from '../screens/AddProduct';
 import CameraScreen from '../screens/CameraScreen';
 import Timeline from '../screens/order/Timeline';
 import Theme from '../screens/order/Theme';
+import LoginScreen from '../screens/order/LoginScreen'
+import HomeScreenT from '../screens/order/HomeScreen'
 
 const Stack = createNativeStackNavigator();
 
@@ -17,12 +19,14 @@ const StackNavigator = ({ linking }) => {
   return (
     <NavigationContainer linking={linking}>
       <Stack.Navigator
-        initialRouteName='Timeline'
+        initialRouteName='LoginScreen'
         screenOptions={{
           headerShown: false
         }}
 
       >
+        <Stack.Screen name='HomeScreenT' component={HomeScreenT} />
+        <Stack.Screen name='LoginScreen' component={LoginScreen} />
         <Stack.Screen name='Timeline' component={Timeline} />
         <Stack.Screen name='Theme' component={Theme} />
         {/* <Stack.Screen name='Welcome' component={WelcomeScreen} />
