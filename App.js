@@ -45,10 +45,8 @@ export default function App() {
 
 
     <Provider store={store}>
-
       <NativeBaseProvider>
-        <LoginScreen />
-        {/* <StackNavigator linking={linking}></StackNavigator>  */}
+        <StackNavigator linking={linking}></StackNavigator> 
       </NativeBaseProvider>
     </Provider>
 
