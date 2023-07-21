@@ -1,10 +1,12 @@
 import { View, Text } from "native-base"
 import { Pressable, StyleSheet } from "react-native"
 
-const LoginButton = ({onPress}) => {
+const LoginButton = ({onPress, isActive}) => {
     return (
-        <Pressable onPress={onPress}>
-            <View style={style.button}>
+        <Pressable onPress={isActive ? onPress : null}>
+            <View style={[style.button, {
+                opacity: isActive ? 1 : 0.3
+            }]}>
             <Text style={style.text}>
                 Giriş Yap
             </Text>
