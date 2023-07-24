@@ -44,7 +44,7 @@ const LoginPassField = ({ password, setPassword }) => {
 
 const style = StyleSheet.create({
     container: {
-        backgroundColor: 'rgb(245,245,245)',
+        backgroundColor: 'rgba(110,0,239, 0.1)',
         height: 60,
         borderRadius: 10,
     }
