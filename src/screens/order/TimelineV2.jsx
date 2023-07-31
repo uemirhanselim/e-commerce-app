@@ -1,28 +1,106 @@
-import { Box, HStack, Pressable, Spacer, VStack } from 'native-base';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, SafeAreaView, PixelRatio } from 'react-native';
+import { View, Text, Pressable, StyleSheet, PixelRatio } from 'react-native'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { useNavigation } from '@react-navigation/native'
+import { useSelector, useDispatch } from 'react-redux'
 import axios from 'axios'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { LinearGradient } from 'expo-linear-gradient'
+import { SafeAreaView } from 'react-native'
+import { Box, FlatList, HStack, VStack } from 'native-base'
 import { useFonts, Montserrat_500Medium_Italic, Montserrat_700Bold, Montserrat_600SemiBold } from '@expo-google-fonts/montserrat'
-import { Ionicons } from '@expo/vector-icons'
-import { useNavigation } from '@react-navigation/native';
-import { GetStoredTheme } from '../../storage/ThemeStorage'
-import { useDispatch, useSelector } from 'react-redux';
-import { SetVisite, SetOrder, SetPayment, SetStartDate, SetEndDate, SetFilterOn, SetIsSheetOpen } from '../../redux/actions/cardActions'
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { Ionicons } from '@expo/vector-icons'
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import { DarkTheme, LightTheme } from '../../constants/ColorTheme'
 import BottomSheet from '@gorhom/bottom-sheet';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import BottomSheetButton from '../../components/BottomSheetButton';
+import { SetVisite, SetOrder, SetPayment, SetStartDate, SetEndDate, SetFilterOn, SetIsSheetOpen } from '../../redux/actions/cardActions'
+import { GetStoredTheme } from '../../storage/ThemeStorage'
+import BottomSheetButton from '../../components/BottomSheetButton'
 
+const TimelineV2 = () => {
+
+  const [customerData, setCustomerData] = useState([])
+  const navigation = useNavigation()
+  const sheetRef = useRef(null)
+  const isSheetOpen = useSelector(state => state.IsSheetOpenReducer)
+  let [fontsLoaded] = useFonts({
+    Montserrat_500Medium_Italic, Montserrat_700Bold, Montserrat_600SemiBold
+  });
+  const [theme, setTheme] = useState("dark")
+  //TODO: set theme from storage 
+  //TODO: initialize fonts at home screen
+
+  const getTheme = async () => {
+    const th = await GetStoredTheme()
+    if (th !== null) {
+      setTheme(th)
+    } else {
+      return
+    }
+  }
+
+  useEffect(() => {
+
+    // navigation.addListener('focus', () => {
+    //   getTheme()
+    // })
+    postData();
+  }, [theme])
+
+
+  const postData = async () => {
+
+    try {
+      console.log("istek atıldı")
+      const response = await axios.post('http://duyu.alter.net.tr/api/TimelineCustomer', {
+        token: 'RasyoIoToken2021',
+        StartDate: '01.01.2023',
+        EndDate: '10.04.2023',
+        CustomerId: '120 04 006',
+        user_token: '$2y$10$x4.gGU7y5jPP9uZ1wdkA0eqfzztRFIYb5.w3QhgaABonC2wWhh3GS',
+      });
+      console.log(" response", response.data);
+      setCustomerData(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  if (customerData.length === 0 || !fontsLoaded) {
+    return null;
+  }
+  console.log("fetched data", customerData);
+  return (
+    <GestureHandlerRootView>
+      <LinearGradient
+        colors={theme === "dark" ? ["rgb(255, 234, 210)", "#ffff", "#ffff", "rgb(255, 234, 210)"] :
+          ['rgb(179, 232, 229)', "#ffff", "#ffff", 'rgb(179, 232, 229)']}
+        start={{ x: 0.05, y: -8 }}
+        end={{ x: 3, y: 3 }}
+      >
+        <SafeAreaView style={[styles.timeline, { opacity: isSheetOpen ? 0.3 : 1 }]}>
+          <View
+            style={[styles.line, {
+              backgroundColor: theme === "dark" ? 'rgb(172, 177, 214)' : 'rgb(59, 172, 182)',
+              opacity: isSheetOpen ? 0.1 : 1
+            }]}
+          />
+
+          <CustomerInfo customerData={customerData[0]} theme={theme} navigation={navigation} sheetRef={sheetRef} />
+          <View style={{ width: 300, height: 3, backgroundColor: theme === "dark" ? 'rgb(172, 177, 214)' : 'rgb(59, 172, 182)' }} />
+
+          <FlatList
+            data={customerData[2]}
+            showsVerticalScrollIndicator= {false}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item, index }) => <TimelineItem item={item} index={index} data={customerData} theme={theme} />}
+          />
+        </SafeAreaView>
+      </LinearGradient>
+    </GestureHandlerRootView>
+  )
+}
 
 const TimelineItem = ({ item, index, data, theme }) => {
-  const originalCollectionDate = data[1][0].CollectionDate;
-  const collectionDate = new Date(originalCollectionDate);
-  const dateFormatter = (date) => {
-    return `${date.getDate() < 10 ? '0' : ''}${date.getDate()}.${date.getMonth() + 1 < 10 ? '0' : ''}${date.getMonth() + 1}.${date.getFullYear()}`;
-  }
 
   const formatter = (text) => {
     return text.toLocaleString('tr-TR', {
@@ -38,7 +116,7 @@ const TimelineItem = ({ item, index, data, theme }) => {
   const endDate = useSelector(state => state.EndDateReducer)
   const isFilterOn = useSelector(state => state.FilterOnReducer)
 
-  let originalOrderDate = data[0][0].OrderDate;
+  let originalOrderDate = item.CollectionDate;
   const date = new Date(originalOrderDate);
 
   const isBetween = (currentDate) => {
@@ -50,114 +128,144 @@ const TimelineItem = ({ item, index, data, theme }) => {
   }
 
   return (
-    <VStack style={{
-      width: '100%', marginBottom: 50, justifyContent: 'center',
-      alignItems: 'center'
+    <View style={{
+      width: '100%', marginBottom: 150, justifyContent: 'center',
+      alignItems: 'center', flexDirection: 'column'
     }}>
-      {isFilterOn === false ? (index === 0 ? BodyItem(theme, dateFormatter, date, visite, order, payment, formatter, data, 1)
-
-        : index === 1 ? BodyItem(theme, dateFormatter, collectionDate, visite, order, payment, formatter, data, 0) : <></>) :
-        isBetween(date) === true && isBetween(collectionDate) === true ? (index === 0 ? BodyItem(theme, dateFormatter, date, visite, order, payment, formatter, data, 1)
-
+      <BodyItem theme={theme} date={date}
+        visite={visite} order={order} payment={payment} formatter={formatter} data={data} index={index} />
+      {/* {isFilterOn === false ? <BodyItem theme={theme} dateFormatter={dateFormatter} date={date}
+        visite={visite} order={order} payment={payment} formatter={formatter} data={data} index={index} /> : isBetween(date) === true ?
+        <BodyItem theme={theme} dateFormatter={dateFormatter} date={date}
+          visite={visite} order={order} payment={payment} formatter={formatter} data={data} index={index} /> : null
+      } */}
+      {/* {isFilterOn === false ? (index === 0 ? BodyItem(theme, dateFormatter, date, visite, order, payment, formatter, data, 1)
+  
           : index === 1 ? BodyItem(theme, dateFormatter, collectionDate, visite, order, payment, formatter, data, 0) : <></>) :
-          isBetween(date) === true && isBetween(collectionDate) === false ? (index === 0 ? BodyItem(theme, dateFormatter, date, visite, order, payment, formatter, data, 1)
-
-            : <></>) :
-            isBetween(date) === false && isBetween(collectionDate) === true ? (index === 1 ? BodyItem(theme, dateFormatter, collectionDate, visite, order, payment, formatter, data, 0) : <></>) :
-              <></>
-      }
+          isBetween(date) === true && isBetween(collectionDate) === true ? (index === 0 ? BodyItem(theme, dateFormatter, date, visite, order, payment, formatter, data, 1)
+  
+            : index === 1 ? BodyItem(theme, dateFormatter, collectionDate, visite, order, payment, formatter, data, 0) : <></>) :
+            isBetween(date) === true && isBetween(collectionDate) === false ? (index === 0 ? BodyItem(theme, dateFormatter, date, visite, order, payment, formatter, data, 1)
+  
+              : <></>) :
+              isBetween(date) === false && isBetween(collectionDate) === true ? (index === 1 ? BodyItem(theme, dateFormatter, collectionDate, visite, order, payment, formatter, data, 0) : <></>) :
+                <></>
+        } */}
       <Box style={{ height: 200 }} />
-    </VStack>
+    </View>
   );
 };
 
 
-const Timeline = () => {
-  const [customerData, setCustomerData] = useState({})
-  const [orderData, setOrderData] = useState([])
-  const navigation = useNavigation()
-  const [theme, setTheme] = useState("dark")
-  let [fontsLoaded] = useFonts({
-    Montserrat_500Medium_Italic, Montserrat_700Bold, Montserrat_600SemiBold
+const BodyItem = ({ theme, collectionDate, visite, order, payment, formatter, data, index }) => {
+  const sTimeString = data[3][index] === undefined ? null : data[3][index].StartTime
+  const eTimeString = data[3][index] === undefined ? null : data[3][index].EndTime
+  const formattedSTime = sTimeString !== null ? `${sTimeString.split(':')[0]}.${sTimeString.split(':')[1]}` : null
+  const formattedETime = eTimeString !== null ? `${eTimeString.split(':')[0]}.${eTimeString.split(':')[1]}` : null;
+  const plasiyerCost = data[1][index] === undefined ? null : data[1][index].OrderAmountPriceSalesman
+  const formattedPlasiyerCost = plasiyerCost === null ? null : plasiyerCost.toLocaleString('tr-TR', {
+    style: 'currency',
+    currency: 'TRY',
   });
-  const sheetRef = useRef(null)
-  const isSheetOpen = useSelector(state => state.IsSheetOpenReducer)
 
-  const postData = async () => {
 
-    try {
-      const response = await axios.post('http://duyu.alter.net.tr/api/TimelineCustomer', {
-        token: 'RasyoIoToken2021',
-        StartDate: '01.01.2023',
-        EndDate: '10.04.2023',
-        CustomerId: '120 04 006',
-        user_token: '$2y$10$x4.gGU7y5jPP9uZ1wdkA0eqfzztRFIYb5.w3QhgaABonC2wWhh3GS',
-      });
-      setCustomerData(response.data[0][0]);
-      const orderList = []
-      for (i = 1; i < response.data.length; i++) {
-        orderList.push(response.data[i])
-
-      }
-      setOrderData(orderList)
-
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const getTheme = async () => {
-    const th = await GetStoredTheme()
-    if (th !== null) {
-      setTheme(th)
-    } else {
-      return
-    }
+  const dateFormatter = (date) => {
+    return `${date.getDate() < 10 ? '0' : ''}${date.getDate()}.${date.getMonth() + 1 < 10 ? '0' : ''}${date.getMonth() + 1}.${date.getFullYear()}`;
   }
+  return <>
+    <View style={[styles.circle, index % 2 === 0 ? {
+      borderColor: theme === "dark" ? 'rgb(130, 148, 196)' : 'rgb(47, 143, 157)',
+    } : {
+      borderColor: theme === "dark" ? 'rgb(130, 148, 196)' : 'rgb(47, 143, 157)'
+    }]}>
+      <Text style={[styles.title, { fontSize: 18, color: theme === "dark" ? 'rgb(130, 148, 196)' : 'rgb(47, 143, 157)' }]}>
+        {dateFormatter(new Date(data[2][index].CollectionDate))}
+      </Text>
+    </View>
+    {/*
+    <HStack marginTop={index !== 0 ? -12 : 12}>
+      {data[2][index].CollectionDate === data[3][index].VisitDate ? <View style={[theme === "dark" ? styles.darkItem : styles.lightItem, styles.itemRight,
+      { display: visite === true ? 'flex' : 'none' }
+      ]}>
+        <View style={[styles.dividedItem, { borderLeftWidth: 0, borderTopWidth: 0, borderBottomWidth: 0, borderRightWidth: 0, width: '100%' }]}>
+          <Text style={styles.title}>Ziyaret</Text>
+        </View>
 
-  useEffect(() => {
-    navigation.addListener('focus', () => {
-      getTheme()
-    })
-    postData();
-  }, [theme])
+        <View style={{ flexDirection: 'row' }}>
+          <View style={[styles.dividedItem, { borderLeftWidth: 0, borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
+            <Text style={styles.description}>Açıklama</Text>
+          </View>
+          <View style={[styles.dividedItem, { borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
+            <Text style={[styles.infoDesc, { textAlign: 'center', fontSize: 10 }]}>{data[3][index].Description}</Text>
+          </View>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={[styles.dividedItem, { borderLeftWidth: 0, borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
+            <Text style={styles.description}>Ziyaret Saati</Text>
+          </View>
+          <View style={[styles.dividedItem, { borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
+            <Text style={styles.infoDesc}>{formattedSTime} - {formattedETime}</Text>
+          </View>
+        </View>
 
-  if (Object.keys(customerData).length === 0 && orderData.length === 0 && !fontsLoaded) {
-    return null;
-  }
-  return (
-    <GestureHandlerRootView>
-      <LinearGradient
-        colors={theme === "dark" ? ["rgb(255, 234, 210)", "#ffff", "#ffff", "rgb(255, 234, 210)"] :
-          ['rgb(179, 232, 229)', "#ffff", "#ffff", 'rgb(179, 232, 229)']}
-        start={{ x: 0.05, y: -8 }}
-        end={{ x: 3, y: 3 }}
-      >
+      </View> : null}
+    </HStack>
+    <HStack>
+      {data[2][index].CollectionDate === data[1][index].OrderDate ? <View style={[theme === "dark" ? styles.darkItem1 : styles.lightItem1, styles.itemLeft,
+      { display: order === true ? 'flex' : 'none' }
+      ]}>
+        <View style={[styles.dividedItem, { borderLeftWidth: 0, borderTopWidth: 0, borderBottomWidth: 0, borderRightWidth: 0, width: '100%' }]}>
+          <Text style={styles.title}>Sipariş</Text>
+        </View>
 
-        <SafeAreaView style={[styles.timeline, { opacity: isSheetOpen ? 0.3 : 1 }]}>
-          <View style={[styles.line, {
-            backgroundColor: theme === "dark" ? 'rgb(172, 177, 214)' : 'rgb(59, 172, 182)',
-            opacity: isSheetOpen ? 0.1 : 1
-          }]} />
-          <CustomerInfo customerData={customerData} theme={theme} navigation={navigation} sheetRef={sheetRef} />
-          <View style={{ width: 300, height: 3, backgroundColor: theme === "dark" ? 'rgb(172, 177, 214)' : 'rgb(59, 172, 182)' }} />
+        <View style={{ flexDirection: 'row' }}>
+          <View style={[styles.dividedItem, { borderLeftWidth: 0, borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
+            <Text style={[styles.description, { textAlign: 'center' }]}>Sipariş Tutarı</Text>
+          </View>
+          <View style={[styles.dividedItem, { borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
+            <Text style={styles.infoDesc}>{formatter(formattedPlasiyerCost)}</Text>
+          </View>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={[styles.dividedItem, { borderLeftWidth: 0, borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
+            <Text style={[styles.description, { textAlign: 'center' }]}>Sistem Sipariş Tutarı</Text>
+          </View>
+          <View style={[styles.dividedItem, { borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
+            <Text style={styles.infoDesc}>{formatter(data[1][index].OrderAmountPriceDefault)}</Text>
+          </View>
+        </View>
 
+      </View> : null}
+    </HStack>
+    <HStack>
+      <View style={[theme === "dark" ? styles.darkItem2 : styles.lightItem2, styles.itemRight,
+      { display: payment === true ? 'flex' : 'none', marginBottom: 0 }
+      ]}>
 
-          <FlatList
-            data={orderData}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item, index }) => <TimelineItem item={item} index={index} data={orderData} theme={theme} />}
-          />
+        <View style={[styles.dividedItem, { borderLeftWidth: 0, borderTopWidth: 0, borderBottomWidth: 0, borderRightWidth: 0, width: '100%' }]}>
+          <Text style={styles.title}>Tahsilat</Text>
+        </View>
 
-        </SafeAreaView>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={[styles.dividedItem, { borderLeftWidth: 0, borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
+            <Text style={[styles.description, { textAlign: 'center' }]}>Kredi Kartı</Text>
+          </View>
+          <View style={[styles.dividedItem, { borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
+            <Text style={styles.infoDesc}>{formatter(data[2][index].Amount)}</Text>
+          </View>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          <View style={[styles.dividedItem, { borderLeftWidth: 0, borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
 
-      </LinearGradient>
-      <BottomSheetComponent sheetRef={sheetRef} theme={theme} />
-    </GestureHandlerRootView>
+          </View>
+          <View style={[styles.dividedItem, { borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
 
-
-  );
-};
+          </View>
+        </View>
+      </View>
+    </HStack> */}
+  </>;
+}
 
 const InfoBar = ({ theme, navigation, sheetRef }) => {
   const dispatch = useDispatch()
@@ -239,30 +347,31 @@ const InfoBar = ({ theme, navigation, sheetRef }) => {
 }
 
 const CustomerInfo = ({ customerData, theme, navigation, sheetRef }) => {
+  const data = customerData[0]
   return (
     <View style={{ width: '100%', justifyContent: 'center', alignItems: 'center', backgroundColor: 'white' }}>
       <Text style={{
         paddingTop: 80, alignItems: 'flex-start', fontSize: 18, marginBottom: 8,
         fontFamily: 'Montserrat_700Bold', color: theme === "dark" ? 'rgb(130, 148, 196)' : 'rgb(47, 143, 157)'
-      }}>{customerData.CustomerName}</Text>
+      }}>{data.CustomerName}</Text>
       <View>
         <HStack>
           <Text style={[styles.title]} >Numara: {" "}
-            <Text style={styles.infoDesc}>{customerData.CustomerId}</Text>  -</Text>
+            <Text style={styles.infoDesc}>{data.CustomerId}</Text>  -</Text>
           <Text style={styles.title}>  Adres: {" "}
-            <Text style={styles.infoDesc}>{customerData.CustomerProvince}</Text></Text>
+            <Text style={styles.infoDesc}>{data.CustomerProvince}</Text></Text>
         </HStack>
         <HStack>
           <Text style={[styles.title]}>Bakiye: {" "}
-            <Text style={styles.infoDesc}>{customerData.CustomerRisk}</Text>  -</Text>
+            <Text style={styles.infoDesc}>{data.CustomerRisk}</Text>  -</Text>
           <Text style={styles.title}>  Cari Risk: {" "}
-            <Text style={styles.infoDesc}>{customerData.CustomerRisk}</Text></Text>
+            <Text style={styles.infoDesc}>{data.CustomerRisk}</Text></Text>
         </HStack>
       </View>
       <Text style={{
         fontFamily: 'Montserrat_700Bold', marginTop: 10, marginBottom: 5,
         color: theme === "dark" ? 'rgb(130, 148, 196)' : 'rgb(47, 143, 157)'
-      }} >{customerData.SalesmanId} - {customerData.SalesmanName}</Text>
+      }} >{data.SalesmanId} - {data.SalesmanName}</Text>
       <InfoBar theme={theme} navigation={navigation} sheetRef={sheetRef} />
     </View>
   )
@@ -394,118 +503,9 @@ const BottomSheetComponent = ({ sheetRef, theme }) => {
   )
 }
 
-export default Timeline;
-
-
-function BodyItem(theme, dateFormatter, collectionDate, visite, order, payment, formatter, data, firstItem) {
-  const sTimeString = data[2][0].StartTime
-  const eTimeString = data[2][0].EndTime
-  const formattedSTime = `${sTimeString.split(':')[0]}.${sTimeString.split(':')[1]}`;
-  const formattedETime = `${eTimeString.split(':')[0]}.${eTimeString.split(':')[1]}`;
-  const plasiyerCost = data[0][0].OrderAmountPriceSalesman
-  const formattedPlasiyerCost = plasiyerCost.toLocaleString('tr-TR', {
-    style: 'currency',
-    currency: 'TRY',
-  });
-
-  return <>
-
-
-    <View style={[styles.circle, firstItem !== 1 ? {
-      borderColor: theme === "dark" ? 'rgb(130, 148, 196)' : 'rgb(47, 143, 157)',
-      marginTop: -100
-    } : {
-      borderColor: theme === "dark" ? 'rgb(130, 148, 196)' : 'rgb(47, 143, 157)'
-    }]}>
-      <Text style={[styles.title, { fontSize: 18, color: theme === "dark" ? 'rgb(130, 148, 196)' : 'rgb(47, 143, 157)' }]}>{dateFormatter(collectionDate)}</Text>
-    </View>
-
-    <HStack marginTop={firstItem !== 1 ? -12 : 12}>
-      <View style={[theme === "dark" ? styles.darkItem : styles.lightItem, styles.itemRight,
-      { display: visite === true ? 'flex' : 'none' }
-      ]}>
-        <View style={[styles.dividedItem, { borderLeftWidth: 0, borderTopWidth: 0, borderBottomWidth: 0, borderRightWidth: 0, width: '100%' }]}>
-          <Text style={styles.title}>Ziyaret</Text>
-        </View>
-
-        <View style={{ flexDirection: 'row' }}>
-          <View style={[styles.dividedItem, { borderLeftWidth: 0, borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
-            <Text style={styles.description}>Açıklama:</Text>
-          </View>
-          <View style={[styles.dividedItem, { borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
-            {firstItem === 1 ? <Text style={[styles.infoDesc, { textAlign: 'center', fontSize: 10 }]}>{data[2][0].Description}</Text> : null}
-          </View>
-        </View>
-        <View style={{ flexDirection: 'row' }}>
-          <View style={[styles.dividedItem, { borderLeftWidth: 0, borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
-            <Text style={styles.description}>Ziyaret Saati:</Text>
-          </View>
-          <View style={[styles.dividedItem, { borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
-            {firstItem === 1 ? <Text style={styles.infoDesc}>{formattedSTime} - {formattedETime}</Text> : null}
-          </View>
-        </View>
-
-      </View>
-    </HStack>
-    <HStack>
-      <View style={[theme === "dark" ? styles.darkItem1 : styles.lightItem1, styles.itemLeft,
-      { display: order === true ? 'flex' : 'none' }
-      ]}>
-        <View style={[styles.dividedItem, { borderLeftWidth: 0, borderTopWidth: 0, borderBottomWidth: 0, borderRightWidth: 0, width: '100%' }]}>
-          <Text style={styles.title}>Sipariş</Text>
-        </View>
-
-        <View style={{ flexDirection: 'row' }}>
-          <View style={[styles.dividedItem, { borderLeftWidth: 0, borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
-            <Text style={[styles.description, { textAlign: 'center' }]}>Sipariş Tutarı</Text>
-          </View>
-          <View style={[styles.dividedItem, { borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
-            {firstItem === 1 ? <Text style={styles.infoDesc}>{formatter(formattedPlasiyerCost)}</Text> : null}
-          </View>
-        </View>
-        <View style={{ flexDirection: 'row' }}>
-          <View style={[styles.dividedItem, { borderLeftWidth: 0, borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
-            <Text style={[styles.description, { textAlign: 'center' }]}>Sistem Sipariş Tutarı</Text>
-          </View>
-          <View style={[styles.dividedItem, { borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
-            {firstItem === 1 ? <Text style={styles.infoDesc}>{formatter(data[0][0].OrderAmountPriceDefault)}</Text> : null}
-          </View>
-        </View>
-
-      </View>
-    </HStack>
-    <HStack>
-      <View style={[theme === "dark" ? styles.darkItem2 : styles.lightItem2, styles.itemRight,
-      { display: payment === true ? 'flex' : 'none', marginBottom: 0 }
-      ]}>
-
-        <View style={[styles.dividedItem, { borderLeftWidth: 0, borderTopWidth: 0, borderBottomWidth: 0, borderRightWidth: 0, width: '100%' }]}>
-          <Text style={styles.title}>Tahsilat</Text>
-        </View>
-
-        <View style={{ flexDirection: 'row' }}>
-          <View style={[styles.dividedItem, { borderLeftWidth: 0, borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
-            <Text style={[styles.description, { textAlign: 'center' }]}>Kredi Kartı:</Text>
-          </View>
-          <View style={[styles.dividedItem, { borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
-            {firstItem === 1 ? <Text style={styles.infoDesc}>{formatter(data[1][1].Amount)}</Text> :
-              <Text style={styles.infoDesc}>{formatter(data[1][0].Amount)}</Text>}
-          </View>
-        </View>
-        <View style={{ flexDirection: 'row' }}>
-          <View style={[styles.dividedItem, { borderLeftWidth: 0, borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
-
-          </View>
-          <View style={[styles.dividedItem, { borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
-
-          </View>
-        </View>
-      </View>
-    </HStack>
-  </>;
-}
 const fontScale = PixelRatio.getFontScale();
 const getFontSize = size => size / fontScale;
+
 
 const styles = StyleSheet.create({
   dividedItem: {
@@ -551,7 +551,6 @@ const styles = StyleSheet.create({
     height: 40,
     borderWidth: 4,
     borderRadius: 10,
-    position: 'absolute',
     backgroundColor: 'white',
     top: 5,
     marginTop: 5,
@@ -709,4 +708,4 @@ const styles = StyleSheet.create({
   },
 });
 
-
+export default TimelineV2
