@@ -6,7 +6,7 @@ import axios from 'axios'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import { LinearGradient } from 'expo-linear-gradient'
 import { SafeAreaView } from 'react-native'
-import { Box, FlatList, HStack, VStack } from 'native-base'
+import { Box, FlatList, HStack, Spacer } from 'native-base'
 import { useFonts, Montserrat_500Medium_Italic, Montserrat_700Bold, Montserrat_600SemiBold } from '@expo-google-fonts/montserrat'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons'
@@ -17,9 +17,18 @@ import { SetVisite, SetOrder, SetPayment, SetStartDate, SetEndDate, SetFilterOn,
 import { GetStoredTheme } from '../../storage/ThemeStorage'
 import BottomSheetButton from '../../components/BottomSheetButton'
 
-const TimelineV2 = () => {
+const TimelineV2 = ({ customerData, unitDates, paymentList, visitList, orderList }) => {
+  // console.log("customer date length", customerData.length)
+  // console.log("payment list length", paymentList.length)
+  // console.log("visit list length", visitList.length)
+  // console.log("order list length", orderList.length)
+  // console.log("unit dates length", unitDates.length)
 
-  const [customerData, setCustomerData] = useState([])
+  // const [customerData, setCustomerData] = useState([])
+  // const [unitDates, setUnitDates] = useState([])
+  // const [paymentList, setPaymentList] = useState([])
+  // const [visitList, setVisitList] = useState([])
+  // const [orderList, setOrderList] = useState([])
   const navigation = useNavigation()
   const sheetRef = useRef(null)
   const isSheetOpen = useSelector(state => state.IsSheetOpenReducer)
@@ -39,36 +48,43 @@ const TimelineV2 = () => {
     }
   }
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    // navigation.addListener('focus', () => {
-    //   getTheme()
-    // })
-    postData();
-  }, [theme])
+  //   // navigation.addListener('focus', () => {
+  //   //   getTheme()
+  //   // })
+  //   postData();
+  // }, [theme])
 
 
-  const postData = async () => {
+  // const postData = async () => {
 
-    try {
-      console.log("istek atıldı")
-      const response = await axios.post('http://duyu.alter.net.tr/api/TimelineCustomer', {
-        token: 'RasyoIoToken2021',
-        StartDate: '01.01.2023',
-        EndDate: '10.04.2023',
-        CustomerId: '120 04 006',
-        user_token: '$2y$10$x4.gGU7y5jPP9uZ1wdkA0eqfzztRFIYb5.w3QhgaABonC2wWhh3GS',
-      });
-      console.log(" response", response.data);
-      setCustomerData(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  if (customerData.length === 0 || !fontsLoaded) {
-    return null;
+  //   try {
+  //     const response = await axios.post('http://duyu.alter.net.tr/api/TimelineCustomer', {
+  //       token: 'RasyoIoToken2021',
+  //       StartDate: '01.01.2023',
+  //       EndDate: '10.04.2023',
+  //       CustomerId: '120 04 006',
+  //       user_token: '$2y$10$x4.gGU7y5jPP9uZ1wdkA0eqfzztRFIYb5.w3QhgaABonC2wWhh3GS',
+  //     });
+  //     const rp = response.data[2].reverse()
+
+  //     for (let i = 0; i < rp.length; i++) {
+  //       if (!unitDates.includes(rp[i].CollectionDate)) {
+  //         unitDates.push(rp[i].CollectionDate);
+  //       }
+  //     }
+  //     setCustomerData(response.data);
+  //     setPaymentList(response.data[2]);
+  //     setVisitList(response.data[3]);
+  //     setOrderList(response.data[1]);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+  if (!fontsLoaded) {
+    return <Text> asdşlakdşlklşsakdş </Text>;
   }
-  console.log("fetched data", customerData);
   return (
     <GestureHandlerRootView>
       <LinearGradient
@@ -89,18 +105,37 @@ const TimelineV2 = () => {
           <View style={{ width: 300, height: 3, backgroundColor: theme === "dark" ? 'rgb(172, 177, 214)' : 'rgb(59, 172, 182)' }} />
 
           <FlatList
-            data={customerData[2]}
-            showsVerticalScrollIndicator= {false}
+            data={unitDates}
+            showsVerticalScrollIndicator={false}
             keyExtractor={(item, index) => index.toString()}
-            renderItem={({ item, index }) => <TimelineItem item={item} index={index} data={customerData} theme={theme} />}
+            renderItem={({ item, index }) => <TimelineItem item={item} index={index} theme={theme}
+              paymentList={paymentList} orderList={orderList} visitList={visitList} unitDates={unitDates}
+            />}
           />
         </SafeAreaView>
       </LinearGradient>
+      <BottomSheetComponent sheetRef={sheetRef} theme={theme} />
     </GestureHandlerRootView>
   )
 }
 
-const TimelineItem = ({ item, index, data, theme }) => {
+const TimelineItem = ({ item, index, theme, paymentList, orderList, visitList, unitDates }) => {
+  const [currentVisitData, setCurrentVisitData] = useState(null)
+  const [currentPaymnentData, setCurrentPaymentData] = useState(null)
+  const [currentOrderData, setCurrentOrderData] = useState(null)
+  const [isLoading, setIsLoading] = useState(true)
+  useEffect(() => {
+    setLists().then(() => setIsLoading(false))
+  }, [])
+
+  const setLists = async () => {
+    const orderData = orderList.find((order) => order.OrderDate === unitDates[index]);
+    const visitData = visitList.find((visit) => visit.VisitDate === unitDates[index]);
+    const paymentData = paymentList.find((payment) => payment.CollectionDate === unitDates[index]);
+    setCurrentVisitData(visitData || null);
+    setCurrentOrderData(orderData || null);
+    setCurrentPaymentData(paymentData || null);
+  }
 
   const formatter = (text) => {
     return text.toLocaleString('tr-TR', {
@@ -116,7 +151,7 @@ const TimelineItem = ({ item, index, data, theme }) => {
   const endDate = useSelector(state => state.EndDateReducer)
   const isFilterOn = useSelector(state => state.FilterOnReducer)
 
-  let originalOrderDate = item.CollectionDate;
+  let originalOrderDate = unitDates[index];
   const date = new Date(originalOrderDate);
 
   const isBetween = (currentDate) => {
@@ -127,47 +162,40 @@ const TimelineItem = ({ item, index, data, theme }) => {
     }
   }
 
+
   return (
-    <View style={{
-      width: '100%', marginBottom: 150, justifyContent: 'center',
-      alignItems: 'center', flexDirection: 'column'
-    }}>
-      <BodyItem theme={theme} date={date}
-        visite={visite} order={order} payment={payment} formatter={formatter} data={data} index={index} />
-      {/* {isFilterOn === false ? <BodyItem theme={theme} dateFormatter={dateFormatter} date={date}
-        visite={visite} order={order} payment={payment} formatter={formatter} data={data} index={index} /> : isBetween(date) === true ?
-        <BodyItem theme={theme} dateFormatter={dateFormatter} date={date}
-          visite={visite} order={order} payment={payment} formatter={formatter} data={data} index={index} /> : null
-      } */}
-      {/* {isFilterOn === false ? (index === 0 ? BodyItem(theme, dateFormatter, date, visite, order, payment, formatter, data, 1)
-  
-          : index === 1 ? BodyItem(theme, dateFormatter, collectionDate, visite, order, payment, formatter, data, 0) : <></>) :
-          isBetween(date) === true && isBetween(collectionDate) === true ? (index === 0 ? BodyItem(theme, dateFormatter, date, visite, order, payment, formatter, data, 1)
-  
-            : index === 1 ? BodyItem(theme, dateFormatter, collectionDate, visite, order, payment, formatter, data, 0) : <></>) :
-            isBetween(date) === true && isBetween(collectionDate) === false ? (index === 0 ? BodyItem(theme, dateFormatter, date, visite, order, payment, formatter, data, 1)
-  
-              : <></>) :
-              isBetween(date) === false && isBetween(collectionDate) === true ? (index === 1 ? BodyItem(theme, dateFormatter, collectionDate, visite, order, payment, formatter, data, 0) : <></>) :
-                <></>
-        } */}
-      <Box style={{ height: 200 }} />
-    </View>
+    <>
+      {!isLoading ? <View style={{
+        width: '100%', justifyContent: 'center',
+        alignItems: 'center', flexDirection: 'column'
+      }}>
+
+        {isFilterOn === false ? <BodyItem theme={theme} date={date}
+          visite={visite} order={order} payment={payment} formatter={formatter} index={index} currentOrderData={currentOrderData}
+          currentPaymnentData={currentPaymnentData} currentVisitData={currentVisitData} unitDates={unitDates}
+        /> : isBetween(date) === true ?
+          <BodyItem theme={theme} date={date}
+            visite={visite} order={order} payment={payment} formatter={formatter} index={index} currentOrderData={currentOrderData}
+            currentPaymnentData={currentPaymnentData} currentVisitData={currentVisitData} unitDates={unitDates}
+          /> : null
+        }
+        <Box style={{ height: 200 }} />
+      </View> : <View />}
+    </>
   );
 };
 
 
-const BodyItem = ({ theme, collectionDate, visite, order, payment, formatter, data, index }) => {
-  const sTimeString = data[3][index] === undefined ? null : data[3][index].StartTime
-  const eTimeString = data[3][index] === undefined ? null : data[3][index].EndTime
+const BodyItem = ({ theme, visite, order, payment, formatter, index, currentOrderData, currentPaymnentData, currentVisitData, unitDates }) => {
+  const sTimeString = currentVisitData === null ? null : currentVisitData.StartTime
+  const eTimeString = currentVisitData === null ? null : currentVisitData.EndTime
   const formattedSTime = sTimeString !== null ? `${sTimeString.split(':')[0]}.${sTimeString.split(':')[1]}` : null
   const formattedETime = eTimeString !== null ? `${eTimeString.split(':')[0]}.${eTimeString.split(':')[1]}` : null;
-  const plasiyerCost = data[1][index] === undefined ? null : data[1][index].OrderAmountPriceSalesman
+  const plasiyerCost = currentOrderData === null ? null : currentOrderData.OrderAmountPriceSalesman
   const formattedPlasiyerCost = plasiyerCost === null ? null : plasiyerCost.toLocaleString('tr-TR', {
     style: 'currency',
     currency: 'TRY',
   });
-
 
   const dateFormatter = (date) => {
     return `${date.getDate() < 10 ? '0' : ''}${date.getDate()}.${date.getMonth() + 1 < 10 ? '0' : ''}${date.getMonth() + 1}.${date.getFullYear()}`;
@@ -179,15 +207,15 @@ const BodyItem = ({ theme, collectionDate, visite, order, payment, formatter, da
       borderColor: theme === "dark" ? 'rgb(130, 148, 196)' : 'rgb(47, 143, 157)'
     }]}>
       <Text style={[styles.title, { fontSize: 18, color: theme === "dark" ? 'rgb(130, 148, 196)' : 'rgb(47, 143, 157)' }]}>
-        {dateFormatter(new Date(data[2][index].CollectionDate))}
+        {dateFormatter(new Date(unitDates[index]))}
       </Text>
     </View>
-    {/*
-    <HStack marginTop={index !== 0 ? -12 : 12}>
-      {data[2][index].CollectionDate === data[3][index].VisitDate ? <View style={[theme === "dark" ? styles.darkItem : styles.lightItem, styles.itemRight,
-      { display: visite === true ? 'flex' : 'none' }
+
+    {currentVisitData !== null ? <HStack marginTop={0}>
+      <View style={[theme === "dark" ? styles.darkItem : styles.lightItem, styles.itemRight,
+      { display: visite === true ? 'flex' : 'none', marginTop: index === unitDates.length - 1 ? 20 : 20 }
       ]}>
-        <View style={[styles.dividedItem, { borderLeftWidth: 0, borderTopWidth: 0, borderBottomWidth: 0, borderRightWidth: 0, width: '100%' }]}>
+        <View style={[styles.dividedItem, { borderLeftWidth: 0, borderTopWidth: 0, borderBottomWidth: 0, borderRightWidth: 0, width: '100%', alignItems: 'center' }]}>
           <Text style={styles.title}>Ziyaret</Text>
         </View>
 
@@ -196,7 +224,7 @@ const BodyItem = ({ theme, collectionDate, visite, order, payment, formatter, da
             <Text style={styles.description}>Açıklama</Text>
           </View>
           <View style={[styles.dividedItem, { borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
-            <Text style={[styles.infoDesc, { textAlign: 'center', fontSize: 10 }]}>{data[3][index].Description}</Text>
+            <Text style={[styles.infoDesc, { fontSize: 10 }]}>{currentVisitData.Description}</Text>
           </View>
         </View>
         <View style={{ flexDirection: 'row' }}>
@@ -208,19 +236,19 @@ const BodyItem = ({ theme, collectionDate, visite, order, payment, formatter, da
           </View>
         </View>
 
-      </View> : null}
-    </HStack>
-    <HStack>
-      {data[2][index].CollectionDate === data[1][index].OrderDate ? <View style={[theme === "dark" ? styles.darkItem1 : styles.lightItem1, styles.itemLeft,
+      </View>
+    </HStack> : null}
+    {currentOrderData !== null ? <HStack>
+      <View style={[theme === "dark" ? styles.darkItem1 : styles.lightItem1, styles.itemLeft,
       { display: order === true ? 'flex' : 'none' }
       ]}>
-        <View style={[styles.dividedItem, { borderLeftWidth: 0, borderTopWidth: 0, borderBottomWidth: 0, borderRightWidth: 0, width: '100%' }]}>
+        <View style={[styles.dividedItem, { borderLeftWidth: 0, borderTopWidth: 0, borderBottomWidth: 0, borderRightWidth: 0, width: '100%', alignItems: 'center' }]}>
           <Text style={styles.title}>Sipariş</Text>
         </View>
 
         <View style={{ flexDirection: 'row' }}>
           <View style={[styles.dividedItem, { borderLeftWidth: 0, borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
-            <Text style={[styles.description, { textAlign: 'center' }]}>Sipariş Tutarı</Text>
+            <Text style={[styles.description]}>Sipariş Tutarı</Text>
           </View>
           <View style={[styles.dividedItem, { borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
             <Text style={styles.infoDesc}>{formatter(formattedPlasiyerCost)}</Text>
@@ -228,30 +256,30 @@ const BodyItem = ({ theme, collectionDate, visite, order, payment, formatter, da
         </View>
         <View style={{ flexDirection: 'row' }}>
           <View style={[styles.dividedItem, { borderLeftWidth: 0, borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
-            <Text style={[styles.description, { textAlign: 'center' }]}>Sistem Sipariş Tutarı</Text>
+            <Text style={[styles.description]}>Sistem Sipariş Tutarı</Text>
           </View>
           <View style={[styles.dividedItem, { borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
-            <Text style={styles.infoDesc}>{formatter(data[1][index].OrderAmountPriceDefault)}</Text>
+            <Text style={styles.infoDesc}>{formatter(currentOrderData.OrderAmountPriceDefault)}</Text>
           </View>
         </View>
 
-      </View> : null}
-    </HStack>
-    <HStack>
+      </View>
+    </HStack> : null}
+    {currentPaymnentData !== null ? <HStack>
       <View style={[theme === "dark" ? styles.darkItem2 : styles.lightItem2, styles.itemRight,
-      { display: payment === true ? 'flex' : 'none', marginBottom: 0 }
+      { display: payment === true ? 'flex' : 'none', marginBottom: 0, marginTop: index === unitDates.length - 1 ? 20 : 0 }
       ]}>
 
-        <View style={[styles.dividedItem, { borderLeftWidth: 0, borderTopWidth: 0, borderBottomWidth: 0, borderRightWidth: 0, width: '100%' }]}>
+        <View style={[styles.dividedItem, { borderLeftWidth: 0, borderTopWidth: 0, borderBottomWidth: 0, borderRightWidth: 0, width: '100%', alignItems: 'center' }]}>
           <Text style={styles.title}>Tahsilat</Text>
         </View>
 
         <View style={{ flexDirection: 'row' }}>
           <View style={[styles.dividedItem, { borderLeftWidth: 0, borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
-            <Text style={[styles.description, { textAlign: 'center' }]}>Kredi Kartı</Text>
+            <Text style={[styles.description]}>Kredi Kartı</Text>
           </View>
           <View style={[styles.dividedItem, { borderRightWidth: 0, borderBottomWidth: 0, width: '50%' }]}>
-            <Text style={styles.infoDesc}>{formatter(data[2][index].Amount)}</Text>
+            <Text style={styles.infoDesc}>{formatter(currentPaymnentData.Amount)}</Text>
           </View>
         </View>
         <View style={{ flexDirection: 'row' }}>
@@ -263,7 +291,8 @@ const BodyItem = ({ theme, collectionDate, visite, order, payment, formatter, da
           </View>
         </View>
       </View>
-    </HStack> */}
+    </HStack> : null}
+    {index === unitDates.length - 1 ? <Box height={150} /> : null}
   </>;
 }
 
@@ -512,8 +541,9 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     borderWidth: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    alignItems: 'flex-start',
     height: 33,
+    paddingLeft: 5,
   },
   info: {
     flex: 1,
@@ -614,12 +644,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 2,
-    marginTop: 20,
+
 
   },
   darkItem1: {
     flexDirection: 'column',
-    marginBottom: 10,
     backgroundColor: DarkTheme.item1,
     borderRadius: 10,
     width: '100%',
@@ -629,12 +658,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 2,
-    marginTop: 20,
 
   },
   darkItem2: {
     flexDirection: 'column',
-    marginBottom: 10,
     backgroundColor: DarkTheme.item2,
     borderRadius: 10,
     width: '100%',
@@ -644,7 +671,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 2,
-    marginTop: 20,
 
   },
   content: {
@@ -671,7 +697,7 @@ const styles = StyleSheet.create({
   description: {
     fontSize: getFontSize(10),
     marginBottom: 2,
-
+    textAlign: 'left',
     fontFamily: 'Montserrat_600SemiBold'
   },
   timestamp: {
@@ -679,7 +705,6 @@ const styles = StyleSheet.create({
   },
   itemLeft: {
     alignItems: 'flex-start',
-    marginBottom: 10,
     borderRadius: 10,
     width: '46%',
     shadowColor: 'black',
@@ -687,14 +712,12 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 0,
-    marginTop: 20,
     left: 0,
     marginRight: '52%',
   },
 
   itemRight: {
     alignItems: 'flex-start',
-    marginBottom: 10,
     borderRadius: 10,
     width: '46%',
     shadowColor: 'black',
@@ -702,7 +725,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 0,
-    marginTop: 20,
     right: -5,
     marginLeft: '48%',
   },
