@@ -1,18 +1,20 @@
 import { View, Text, StyleSheet, SafeAreaView, Dimensions } from 'react-native'
 import React from 'react'
 import { useRoute } from '@react-navigation/native'
-import { Box, FlatList, Icon, ScrollView } from 'native-base';
+import { Box, FlatList, Icon, Pressable, ScrollView } from 'native-base';
 import { Ionicons } from '@expo/vector-icons'
 
 // Gap stuff
 const { width, height } = Dimensions.get('window');
 
-const renderItem = ({ item }) => {
+const renderItem = ({ item, salesmanId }) => {
   return (
-    <View style={style.item}>
+    <Pressable onPress={() => console.log(salesmanId)}>
+      <View style={style.item}>
       <Icon as={Ionicons} name={item['icon']} size={60} color="white" />
       <Text style={{ color: 'white', fontSize: 15, fontWeight: '500' }}>{item['title']}</Text>
     </View>
+    </Pressable>
   )
 };
 const HomeScreenT = () => {
@@ -40,7 +42,7 @@ const HomeScreenT = () => {
         <FlatList
           numColumns={2}
           data={homeData}
-          renderItem={renderItem}
+          renderItem={renderItem(data['id'])}
         />
       </View>
     </SafeAreaView>
