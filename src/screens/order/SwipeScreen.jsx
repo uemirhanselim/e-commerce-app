@@ -31,6 +31,7 @@ import Swiper from 'react-native-swiper';
 import axios from 'axios'
 import TimelineV2 from './TimelineV2';
 import CircularProgress from 'react-native-circular-progress-indicator';
+import { Center } from 'native-base';
 
 const SwipeScreen = () => {
   const [index, setIndex] = useState(0)
@@ -117,7 +118,8 @@ const SwipeScreen = () => {
       const rp = response.data[2].reverse()
       const rv = response.data[3].reverse()
       const ro = response.data[1].reverse()
-
+      // setUnitDates([])
+      console.log("empty list ", unitDates)
       for (let i = 0; i < rp.length; i++) {
         if (!unitDates.includes(rp[i].CollectionDate)) {
           unitDates.push(rp[i].CollectionDate);
@@ -133,6 +135,7 @@ const SwipeScreen = () => {
           unitDates.push(rv[i].VisitDate);
         }
       }
+
       setCustomerData(response.data);
       setPaymentList(response.data[2]);
       setVisitList(response.data[3]);
@@ -142,9 +145,9 @@ const SwipeScreen = () => {
     }
   }
 
-  if (isLoading) {
-    return <View style={{ justifyContent: 'center', alignContent: 'center', alignItems: 'center' }}>
-      <Text>Loading...</Text>
+  if (isLoading && unitDates.length === 0) {
+    return <View style={{ marginTop: '100%' }}>
+      <Text style={{ textAlign: 'center' }}>Loading...</Text>
     </View>
   }
 

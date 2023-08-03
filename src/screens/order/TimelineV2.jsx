@@ -18,7 +18,8 @@ import { GetStoredTheme } from '../../storage/ThemeStorage'
 import BottomSheetButton from '../../components/BottomSheetButton'
 
 const TimelineV2 = ({ customerData, unitDates, paymentList, visitList, orderList }) => {
-  // console.log("customer date length", customerData.length)
+  console.log("filled list ", unitDates)
+  // console.log("customer date length", customerData.length) 
   // console.log("payment list length", paymentList.length)
   // console.log("visit list length", visitList.length)
   // console.log("order list length", orderList.length)
