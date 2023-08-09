@@ -18,18 +18,6 @@ import { GetStoredTheme } from '../../storage/ThemeStorage'
 import BottomSheetButton from '../../components/BottomSheetButton'
 
 const TimelineV2 = ({ customerData, unitDates, paymentList, visitList, orderList }) => {
-  console.log("filled list ", unitDates)
-  // console.log("customer date length", customerData.length) 
-  // console.log("payment list length", paymentList.length)
-  // console.log("visit list length", visitList.length)
-  // console.log("order list length", orderList.length)
-  // console.log("unit dates length", unitDates.length)
-
-  // const [customerData, setCustomerData] = useState([])
-  // const [unitDates, setUnitDates] = useState([])
-  // const [paymentList, setPaymentList] = useState([])
-  // const [visitList, setVisitList] = useState([])
-  // const [orderList, setOrderList] = useState([])
   const navigation = useNavigation()
   const sheetRef = useRef(null)
   const isSheetOpen = useSelector(state => state.IsSheetOpenReducer)
@@ -49,42 +37,8 @@ const TimelineV2 = ({ customerData, unitDates, paymentList, visitList, orderList
     }
   }
 
-  // useEffect(() => {
-
-  //   // navigation.addListener('focus', () => {
-  //   //   getTheme()
-  //   // })
-  //   postData();
-  // }, [theme])
-
-
-  // const postData = async () => {
-
-  //   try {
-  //     const response = await axios.post('http://duyu.alter.net.tr/api/TimelineCustomer', {
-  //       token: 'RasyoIoToken2021',
-  //       StartDate: '01.01.2023',
-  //       EndDate: '10.04.2023',
-  //       CustomerId: '120 04 006',
-  //       user_token: '$2y$10$x4.gGU7y5jPP9uZ1wdkA0eqfzztRFIYb5.w3QhgaABonC2wWhh3GS',
-  //     });
-  //     const rp = response.data[2].reverse()
-
-  //     for (let i = 0; i < rp.length; i++) {
-  //       if (!unitDates.includes(rp[i].CollectionDate)) {
-  //         unitDates.push(rp[i].CollectionDate);
-  //       }
-  //     }
-  //     setCustomerData(response.data);
-  //     setPaymentList(response.data[2]);
-  //     setVisitList(response.data[3]);
-  //     setOrderList(response.data[1]);
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
   if (!fontsLoaded) {
-    return <Text> asdşlakdşlklşsakdş </Text>;
+    return <Text> Loading ... </Text>;
   }
   return (
     <GestureHandlerRootView>
@@ -101,7 +55,6 @@ const TimelineV2 = ({ customerData, unitDates, paymentList, visitList, orderList
               opacity: isSheetOpen ? 0.1 : 1
             }]}
           />
-
           <CustomerInfo customerData={customerData[0]} theme={theme} navigation={navigation} sheetRef={sheetRef} />
           <View style={{ width: 300, height: 3, backgroundColor: theme === "dark" ? 'rgb(172, 177, 214)' : 'rgb(59, 172, 182)' }} />
 

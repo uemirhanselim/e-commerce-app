@@ -6,9 +6,6 @@ import linking from './src/product/Linking';
 import { useEffect } from 'react';
 import * as Location from 'expo-location';
 import { StoreData } from './src/storage/ProfileStorage';
-import Timeline from './src/screens/order/Timeline';
-import SwipeScreen from './src/screens/order/SwipeScreen';
-import LoginScreen from './src/screens/order/LoginScreen';
 
 
 export default function App() {

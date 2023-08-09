@@ -1,30 +1,60 @@
 import { View, Text, StyleSheet, SafeAreaView, Dimensions } from 'react-native'
-import React from 'react'
-import { useRoute } from '@react-navigation/native'
+import React, { useEffect, useState } from 'react'
+import { useNavigation, useRoute } from '@react-navigation/native'
 import { Box, FlatList, Icon, Pressable, ScrollView } from 'native-base';
 import { Ionicons } from '@expo/vector-icons'
+import axios from 'axios';
 
 // Gap stuff
 const { width, height } = Dimensions.get('window');
 
-const renderItem = ({ item, salesmanId }) => {
+const RenderItem = ({ item, navigation, customerList }) => {
   return (
-    <Pressable onPress={() => console.log(salesmanId)}>
+    <Pressable onPress={() => {
+      navigation.navigate(item['route'], {
+        item: {
+          "customerList": customerList,
+        }
+      })
+    }}>
       <View style={style.item}>
-      <Icon as={Ionicons} name={item['icon']} size={60} color="white" />
-      <Text style={{ color: 'white', fontSize: 15, fontWeight: '500' }}>{item['title']}</Text>
-    </View>
+        <Icon as={Ionicons} name={item['icon']} size={60} color="white" />
+        <Text style={{ color: 'white', fontSize: 15, fontWeight: '500' }}>{item['title']}</Text>
+      </View>
     </Pressable>
   )
 };
 const HomeScreenT = () => {
+  const navigation = useNavigation()
   const route = useRoute()
   const data = route.params.item
+  const [customerList, setCustomerList] = useState([])
+
+  useEffect(() => {
+
+    postData()
+  }, [])
+
+  const postData = async () => {
+    try {
+      const response = await axios.post('http://duyu.alter.net.tr/api/TimelineCustomerList', {
+        token: 'RasyoIoToken2021',
+        StartDate: '01.01.2023',
+        EndDate: '10.12.2023',
+        SalesmanId: data['id'],
+        user_token: '$2y$10$x4.gGU7y5jPP9uZ1wdkA0eqfzztRFIYb5.w3QhgaABonC2wWhh3GS',
+      });
+      setCustomerList(response.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const homeData = [
     {
       "title": "Zaman Çizelgesi",
       "icon": "time",
+      "route": "SwipeScreen"
     }
   ]
   return (
@@ -42,7 +72,7 @@ const HomeScreenT = () => {
         <FlatList
           numColumns={2}
           data={homeData}
-          renderItem={renderItem(data['id'])}
+          renderItem={({ item, index }) => <RenderItem item={item} customerList={customerList} navigation={navigation} />}
         />
       </View>
     </SafeAreaView>

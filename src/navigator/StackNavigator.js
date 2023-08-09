@@ -8,7 +8,6 @@ import CardScreen from '../screens/CardScreen';
 import WelcomeScreen from '../screens/onboard/WelcomeScreen';
 import AddProduct from '../screens/AddProduct';
 import CameraScreen from '../screens/CameraScreen';
-import Timeline from '../screens/order/Timeline';
 import Theme from '../screens/order/Theme';
 import LoginScreen from '../screens/order/LoginScreen'
 import HomeScreenT from '../screens/order/HomeScreen'
@@ -21,7 +20,7 @@ const StackNavigator = ({ linking }) => {
   return (
     <NavigationContainer linking={linking}>
       <Stack.Navigator
-        initialRouteName='SwipeScreen'
+        initialRouteName='LoginScreen'
         screenOptions={{
           headerShown: false
         }}
@@ -29,7 +28,6 @@ const StackNavigator = ({ linking }) => {
       >
         <Stack.Screen name='HomeScreenT' component={HomeScreenT} />
         <Stack.Screen name='LoginScreen' component={LoginScreen} />
-        <Stack.Screen name='Timeline' component={Timeline} />
         <Stack.Screen name='Theme' component={Theme} />
         <Stack.Screen name='TimelineV2' component={TimelineV2} />
         <Stack.Screen name='SwipeScreen' component={SwipeScreen} />
